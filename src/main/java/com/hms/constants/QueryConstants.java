@@ -44,6 +44,9 @@ public final class QueryConstants {
 	public static final String PATIENTS_WITH_IDS = "SELECT * FROM t_user JOIN t_patient ON t_user.pk_user_id=t_patient.fk_user_id "
 			+ "WHERE t_user.is_deleted=0 AND fk_role_id=1 AND t_user.pk_user_id IN (?)";
 
+	public static final String PATIENTS_FOR_DOCTORS = "select * from t_user join t_patient_doctor_mapping on t_user.pk_user_id=t_patient_doctor_mapping.fk_patient_id "
+			+ "join t_user as u on t_patient_doctor_mapping.fk_doctor_id=u.pk_user_id where u.is_deleted=0";
+
 	public static final String JDBC_CONNECTION = "jdbc:mysql://localhost:3306/hospital";
 	public static final String JDBC_USERNAME = "root";
 	public static final String JDBC_PASSWORD = "root";
@@ -56,6 +59,7 @@ public final class QueryConstants {
 	public static final String LAST_NAME = "last_name";
 	public static final String AGE = "age";
 
+	public static final String FK_DOCTOR_ID = "fk_doctor_id";
 	public static final String PK_PATIENT_ID = "pk_patient_id";
 	public static final String PATIENT_HEIGHT = "patient_height";
 	public static final String PATIENT_WEIGHT = "patient_weight";

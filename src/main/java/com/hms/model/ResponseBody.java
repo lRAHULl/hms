@@ -7,7 +7,7 @@ package com.hms.model;
  * @author Rahul
  *
  */
-public class CustomResponse {
+public class ResponseBody {
 	private int status;
 	private Object data;
 

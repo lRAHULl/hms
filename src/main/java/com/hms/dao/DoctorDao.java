@@ -6,7 +6,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -156,8 +158,9 @@ public class DoctorDao {
 	 * @param id of the Doctor.
 	 * @return Doctor with id from the database.
 	 * @throws UserNotFoundException Custom Exception for no user with that id.
+	 * @throws SQLException          Exception thrown by SQL.
 	 */
-	public Doctor readDoctor(int id) throws UserNotFoundException {
+	public Doctor readDoctor(int id) throws UserNotFoundException, SQLException {
 		LOGGER.trace("Inside the readDoctor DAO method");
 		DbConfig dbConfig = null;
 		Connection connection = null;
@@ -172,6 +175,10 @@ public class DoctorDao {
 			doctorReadStatement = connection.prepareStatement(QueryConstants.DOCTOR_READ_QUERY);
 			doctorReadStatement.setInt(NumberConstants.ONE, id);
 			resultSet = doctorReadStatement.executeQuery();
+
+			if (resultSet == null) {
+				throw new UserNotFoundException("User with the given id not found");
+			}
 
 			if (resultSet.next()) {
 				doctor = new Doctor();
@@ -192,7 +199,7 @@ public class DoctorDao {
 			LOGGER.trace("Exited the readDoctor DAO method");
 			return doctor;
 		} catch (SQLException e) {
-			throw new UserNotFoundException("User with id not found");
+			throw e;
 		} finally {
 			LOGGER.trace("Inside Finally block");
 			if (connection != null) {
@@ -292,7 +299,7 @@ public class DoctorDao {
 	/**
 	 * This method returns a list of patients for the given comma-separated user
 	 * ids.
-	 * 
+	 *
 	 * @param ids as a string for the Database.
 	 * @return list of patients for the given ids.
 	 */
@@ -346,5 +353,53 @@ public class DoctorDao {
 		}
 		return null;
 
+	}
+
+	public Map<Integer, List<Patient>> patientsForDoctors() throws SQLException {
+		LOGGER.trace("Inside patientsForDoctors DAO method");
+		DbConfig dbConfig = null;
+		Connection connection = null;
+		ResultSet resultSet;
+		PreparedStatement preparedStatement;
+		int doctorId = -1;
+		Map<Integer, List<Patient>> doctorPatientsMap = new HashMap<Integer, List<Patient>>();
+		Patient patient = null;
+
+		try {
+			dbConfig = new DbConfig();
+			connection = dbConfig.getConnection();
+			connection.setAutoCommit(false);
+			preparedStatement = connection.prepareStatement(QueryConstants.PATIENTS_FOR_DOCTORS);
+
+			resultSet = preparedStatement.executeQuery();
+
+			while (resultSet.next()) {
+				doctorId = resultSet.getInt(QueryConstants.FK_DOCTOR_ID);
+				patient = new Patient();
+				patient.setUsername(resultSet.getString(QueryConstants.USERNAME));
+				patient.setPassword(resultSet.getString(QueryConstants.PASSWORD));
+				patient.setUserId(resultSet.getInt(QueryConstants.PK_USER_ID));
+				patient.setRoleId(resultSet.getInt(QueryConstants.FK_ROLE_ID));
+				patient.setFirstName(resultSet.getString(QueryConstants.FIRST_NAME));
+				patient.setLastName(resultSet.getString(QueryConstants.LAST_NAME));
+				patient.setAge(resultSet.getInt(QueryConstants.AGE));
+				if (doctorPatientsMap.containsKey(doctorId)) {
+					doctorPatientsMap.get(doctorId).add(patient);
+				} else {
+					doctorPatientsMap.put(doctorId, new ArrayList<Patient>());
+					doctorPatientsMap.get(doctorId).add(patient);
+				}
+			}
+			if (connection != null) {
+				dbConfig.closeConnection();
+			}
+			return doctorPatientsMap;
+		} catch (SQLException e) {
+			throw e;
+		} finally {
+			if (connection != null) {
+				dbConfig.closeConnection();
+			}
+		}
 	}
 }

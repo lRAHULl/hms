@@ -1,6 +1,7 @@
 package com.hms.api;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -17,12 +18,11 @@ import org.slf4j.LoggerFactory;
 
 import com.hms.constants.ResponseConstants;
 import com.hms.delegate.DoctorDelegate;
-import com.hms.exception.UsernameAlreadyExistsException;
 import com.hms.exceptionmapper.HmsBusinessException;
 import com.hms.exceptionmapper.HmsSystemException;
-import com.hms.model.CustomResponse;
 import com.hms.model.Doctor;
 import com.hms.model.Patient;
+import com.hms.model.ResponseBody;
 
 /**
  * This Class Maps all the doctors end points to the server.
@@ -42,17 +42,17 @@ public class DoctorApi {
 	 *
 	 * @param doctor object.
 	 * @return JSON response.
-	 * @throws UsernameAlreadyExistsException custom exception.
-	 * @throws HmsSystemException             generic system exception.
+	 * @throws HmsSystemException   generic system exception.
+	 * @throws HmsBusinessException generic client exception.
 	 */
 	@POST
 	@Path("/")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public CustomResponse createDoctor(Doctor doctor) throws UsernameAlreadyExistsException, HmsSystemException {
+	public ResponseBody createDoctor(Doctor doctor) throws HmsSystemException, HmsBusinessException {
 		LOGGER.info("Entered the createDoctor Service with patient object of username: " + doctor.getUsername());
 		Doctor createdDoctor = doctorDelegate.createDoctor(doctor);
-		CustomResponse response = new CustomResponse();
+		ResponseBody response = new ResponseBody();
 		response.setStatus(ResponseConstants.SUCCESS);
 		response.setData(createdDoctor);
 		LOGGER.info("Entered the createDoctor Service with response status: " + response.getStatus());
@@ -68,10 +68,10 @@ public class DoctorApi {
 	@GET
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON)
-	public CustomResponse readDoctors() throws HmsBusinessException {
+	public ResponseBody readDoctors() throws HmsBusinessException {
 		LOGGER.info("Enter the readDoctors Service method");
 		List<Doctor> doctors = doctorDelegate.readDoctors();
-		CustomResponse response = new CustomResponse();
+		ResponseBody response = new ResponseBody();
 		response.setStatus(ResponseConstants.SUCCESS);
 		response.setData(doctors);
 		LOGGER.info("Exit the readDoctors Service method");
@@ -84,14 +84,15 @@ public class DoctorApi {
 	 * @param id taken from the url {id}.
 	 * @return JSON Response with data as a doctor with the given id.
 	 * @throws HmsBusinessException generic client exception.
+	 * @throws HmsSystemException   system failure exception.
 	 */
 	@GET
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public CustomResponse readDoctor(@PathParam("id") int id) throws HmsBusinessException {
+	public ResponseBody readDoctor(@PathParam("id") int id) throws HmsBusinessException, HmsSystemException {
 		LOGGER.info("Enter the readDoctor Service method with id: " + id);
 		Doctor doctor = doctorDelegate.readDoctor(id);
-		CustomResponse response = new CustomResponse();
+		ResponseBody response = new ResponseBody();
 		response.setStatus(ResponseConstants.SUCCESS);
 		response.setData(doctor);
 		LOGGER.info("Exit the readDoctor Service method");
@@ -104,12 +105,13 @@ public class DoctorApi {
 	 *
 	 * @param doctor who needs to be deleted.
 	 * @return JSON response of the data and statusCode.
+	 * @throws HmsBusinessException generic client exception.
 	 */
 	@DELETE
 	@Path("/")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response deleteDoctor(Doctor doctor) {
+	public Response deleteDoctor(Doctor doctor) throws HmsBusinessException {
 		LOGGER.info("Enter the deleteDoctor Service method with id: " + doctor.getUserId());
 		boolean status = doctorDelegate.deleteDoctor(doctor);
 		LOGGER.info("Exit the deleteDoctor Service method");
@@ -125,11 +127,22 @@ public class DoctorApi {
 	@GET
 	@Path("/{id}/patients")
 	@Produces(MediaType.APPLICATION_JSON)
-	public CustomResponse getPatientsForADoctor(@PathParam("id") int id) {
+	public ResponseBody getPatientsForADoctor(@PathParam("id") int id) {
 		List<Patient> patients = doctorDelegate.getPatientsForADoctor(id);
-		CustomResponse response = new CustomResponse();
+		ResponseBody response = new ResponseBody();
 		response.setStatus(ResponseConstants.SUCCESS);
 		response.setData(patients);
+		return response;
+	}
+
+	@GET
+	@Path("/getPatients")
+	@Produces(MediaType.APPLICATION_JSON)
+	public ResponseBody patientsForDoctors() throws HmsSystemException {
+		Map<Integer, List<Patient>> map = doctorDelegate.patientsForDoctors();
+		ResponseBody response = new ResponseBody();
+		response.setStatus(ResponseConstants.SUCCESS);
+		response.setData(map);
 		return response;
 	}
 }

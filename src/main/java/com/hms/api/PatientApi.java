@@ -19,7 +19,7 @@ import org.slf4j.LoggerFactory;
 import com.hms.constants.ResponseConstants;
 import com.hms.delegate.PatientDelegate;
 import com.hms.exception.UsernameAlreadyExistsException;
-import com.hms.model.CustomResponse;
+import com.hms.model.ResponseBody;
 import com.hms.model.Patient;
 
 /**
@@ -47,10 +47,10 @@ public class PatientApi {
 	@Path("/")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public CustomResponse createPatient(Patient patient) throws UsernameAlreadyExistsException {
+	public ResponseBody createPatient(Patient patient) throws UsernameAlreadyExistsException {
 		LOGGER.info("Entered the createPatient Service with patient object of username: " + patient.getUsername());
 		Patient createdPatient = patientDelegate.createPatient(patient);
-		CustomResponse response = new CustomResponse();
+		ResponseBody response = new ResponseBody();
 		response.setStatus(ResponseConstants.SUCCESS);
 		response.setData(createdPatient);
 		LOGGER.info("Entered the createPatient Service with response status: " + response.getStatus());
@@ -65,10 +65,10 @@ public class PatientApi {
 	@GET
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON)
-	public CustomResponse readPatients() {
+	public ResponseBody readPatients() {
 		LOGGER.info("Enter the readPatients Service method");
 		List<Patient> patients = patientDelegate.readPatients();
-		CustomResponse response = new CustomResponse();
+		ResponseBody response = new ResponseBody();
 		response.setStatus(ResponseConstants.SUCCESS);
 		response.setData(patients);
 		LOGGER.info("Exit the readPatients Service method");
@@ -84,10 +84,10 @@ public class PatientApi {
 	@GET
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public CustomResponse readPatient(@PathParam("id") int id) {
+	public ResponseBody readPatient(@PathParam("id") int id) {
 		LOGGER.info("Enter the readPatient Service method with id: " + id);
 		Patient patient = patientDelegate.readPatient(id);
-		CustomResponse response = new CustomResponse();
+		ResponseBody response = new ResponseBody();
 		response.setStatus(ResponseConstants.SUCCESS);
 		response.setData(patient);
 		LOGGER.info("Exit the readPatient Service method");
@@ -105,10 +105,10 @@ public class PatientApi {
 	@Path("/")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public CustomResponse updatePatient(Patient patient) {
+	public ResponseBody updatePatient(Patient patient) {
 		LOGGER.info("Enter the updatePatient Service method with id: " + patient.getUserId());
 		boolean status = patientDelegate.updatePatient(patient);
-		CustomResponse response = new CustomResponse();
+		ResponseBody response = new ResponseBody();
 		response.setStatus(ResponseConstants.SUCCESS);
 		response.setData(status);
 		LOGGER.info("Exit the updatePatient Service method");
