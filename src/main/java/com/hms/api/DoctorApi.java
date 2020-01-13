@@ -43,7 +43,7 @@ public class DoctorApi {
 	 * @param doctor object.
 	 * @return JSON response.
 	 * @throws UsernameAlreadyExistsException custom exception.
-	 * @throws HmsSystemException
+	 * @throws HmsSystemException             generic system exception.
 	 */
 	@POST
 	@Path("/")
@@ -63,7 +63,7 @@ public class DoctorApi {
 	 * GET /doctors/ shows all doctors.
 	 *
 	 * @return JSON Response with data as a list of doctors.
-	 * @throws HmsBusinessException
+	 * @throws HmsBusinessException generic client exception.
 	 */
 	@GET
 	@Path("/")
@@ -83,7 +83,7 @@ public class DoctorApi {
 	 *
 	 * @param id taken from the url {id}.
 	 * @return JSON Response with data as a doctor with the given id.
-	 * @throws HmsBusinessException
+	 * @throws HmsBusinessException generic client exception.
 	 */
 	@GET
 	@Path("/{id}")
@@ -116,13 +116,19 @@ public class DoctorApi {
 		return Response.status(ResponseConstants.SUCCESS_WITHOUT_RESPONSE).entity(status).build();
 	}
 
+	/**
+	 * GET /{id}/patients for the given doctor.
+	 *
+	 * @param id from the pathParam which is the id of the doctor.
+	 * @return response of the data if successful.
+	 */
 	@GET
 	@Path("/{id}/patients")
 	@Produces(MediaType.APPLICATION_JSON)
 	public CustomResponse getPatientsForADoctor(@PathParam("id") int id) {
 		List<Patient> patients = doctorDelegate.getPatientsForADoctor(id);
 		CustomResponse response = new CustomResponse();
-		response.setStatus(200);
+		response.setStatus(ResponseConstants.SUCCESS);
 		response.setData(patients);
 		return response;
 	}

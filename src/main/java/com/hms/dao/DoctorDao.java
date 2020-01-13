@@ -100,7 +100,7 @@ public class DoctorDao {
 	 * Gets the List of Doctors from the Database.
 	 *
 	 * @return list of Doctors from the database.
-	 * @throws UserNotFoundException
+	 * @throws UserNotFoundException Custom Exception for no user with that id.
 	 */
 	public List<Doctor> readDoctors() throws UserNotFoundException {
 		LOGGER.trace("Inside the readDoctors DAO method");
@@ -155,7 +155,7 @@ public class DoctorDao {
 	 *
 	 * @param id of the Doctor.
 	 * @return Doctor with id from the database.
-	 * @throws UserNotFoundException
+	 * @throws UserNotFoundException Custom Exception for no user with that id.
 	 */
 	public Doctor readDoctor(int id) throws UserNotFoundException {
 		LOGGER.trace("Inside the readDoctor DAO method");
@@ -251,6 +251,12 @@ public class DoctorDao {
 		return false;
 	}
 
+	/**
+	 * This method returns a list of patient ids for the given doctor.
+	 *
+	 * @param id of the doctor.
+	 * @return list of ids of patients for the given doctor.
+	 */
 	public List<Integer> getPatientsForAGivenDoctor(int id) {
 		LOGGER.trace("Inside the getPatientsForAGivenDoctor method for doctorId: " + id);
 		DbConfig dbConfig = null;
@@ -258,7 +264,6 @@ public class DoctorDao {
 		PreparedStatement preparedStatement;
 		ResultSet resultSet;
 		List<Integer> patientIds = new ArrayList<Integer>();
-		;
 
 		try {
 			dbConfig = new DbConfig();
@@ -270,7 +275,7 @@ public class DoctorDao {
 			resultSet = preparedStatement.executeQuery();
 
 			while (resultSet.next()) {
-				patientIds.add(resultSet.getInt(QueryConstants.FK_PATIENT_ID));
+				patientIds.add(resultSet.getInt(NumberConstants.ONE));
 			}
 			return patientIds;
 		} catch (SQLException e) {
@@ -284,8 +289,15 @@ public class DoctorDao {
 
 	}
 
+	/**
+	 * This method returns a list of patients for the given comma-separated user
+	 * ids.
+	 * 
+	 * @param ids as a string for the Database.
+	 * @return list of patients for the given ids.
+	 */
 	public List<Patient> getPatientsWithIds(String ids) {
-		LOGGER.info("Inside the readPatients DAO method");
+		LOGGER.trace("Inside the readPatients DAO method");
 		DbConfig dbConfig = null;
 		Connection connection = null;
 		ResultSet resultSet;
@@ -322,13 +334,12 @@ public class DoctorDao {
 			if (connection != null) {
 				dbConfig.closeConnection();
 			}
-			LOGGER.info("Exited the readPatients DAO method");
-			LOGGER.error(patients.toString());
+			LOGGER.trace("Exited the readPatients DAO method");
 			return patients;
 		} catch (SQLException e) {
 
 		} finally {
-			LOGGER.info("Inside Finally block");
+			LOGGER.trace("Inside Finally block");
 			if (connection != null) {
 				dbConfig.closeConnection();
 			}
@@ -336,17 +347,4 @@ public class DoctorDao {
 		return null;
 
 	}
-
-//	public List<Patient> patientsForAGivenDoctor(int doctorId) {
-//		DbConfig dbConfig = null;
-//		Connection connection = null;
-//		PreparedStatement preparedStatement;
-//
-//		try {
-//			dbConfig = new DbConfig();
-//			connection = dbConfig.getConnection();
-//			connection.setAutoCommit(false);
-//			preparedStatement = connection.prepareStatement(QueryConstants.MAP_DOCTOR_FOR_PATIENT);
-//		}
-//	}
 }

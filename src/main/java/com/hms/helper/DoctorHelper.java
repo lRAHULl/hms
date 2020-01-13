@@ -91,6 +91,12 @@ public class DoctorHelper {
 		return status;
 	}
 
+	/**
+	 * This method takes doctor id and returns a list of csv patientIds.
+	 * 
+	 * @param id of the doctor.
+	 * @return string of comma-separated patientIds for the doctor.
+	 */
 	public String getPatientsIdForAGivenDoctorId(int id) {
 		LOGGER.trace("Entered the getPatientsIdForAGivenDoctorId Helper method with id: " + id);
 		List<Integer> patientIds = doctorDao.getPatientsForAGivenDoctor(id);
@@ -107,6 +113,12 @@ public class DoctorHelper {
 		return result;
 	}
 
+	/**
+	 * This method returns a list of patient for the given doctor.
+	 *
+	 * @param ids as string for the given doctor.
+	 * @return list of patients for the doctor.
+	 */
 	public List<Patient> getPatientsWithIds(String ids) {
 		List<Patient> patients = doctorDao.getPatientsWithIds(ids);
 		for (Patient patient : patients) {

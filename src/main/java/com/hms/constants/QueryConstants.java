@@ -35,11 +35,14 @@ public final class QueryConstants {
 	public static final String PATIENT_DELETE_QUERY = "UPDATE t_patient SET is_deleted=1 WHERE fk_user_id=? AND is_deleted=0";
 	public static final String DOCTOR_DELETE_QUERY = "UPDATE t_doctor SET is_deleted=1 WHERE fk_user_id=? AND is_deleted=0";
 
-	public static final String MAP_DOCTOR_FOR_PATIENT = "select user.pk_user_id,user.username,user.password,user.first_name,user.last_name,user.age,patient.patient_height,patient.patient_weight,patient.door_no,patient.street, patient.city, patient.blood_group from t_user JOIN t_patient ON t_user.pk_user_id=t_patient.fk_user_id "
+	public static final String MAP_DOCTOR_FOR_PATIENT = "select user.pk_user_id,user.username,user.password,user.first_name,user.last_name,user.age"
+			+ ",patient.patient_height,patient.patient_weight,patient.door_no,patient.street, patient.city, patient.blood_group from t_user JOIN t_patient"
+			+ " ON t_user.pk_user_id=t_patient.fk_user_id "
 			+ "INNER JOIN t_patient_doctor_mapping as mapping where user.is_deleted=0 and mapping.is_deleted=0 and user.fk_role_id=1 and mapping.fk_doctor_id=?";
 
 	public static final String PATIENT_IDS_FOR_A_GIVEN_DOCTOR = "SELECT fk_patient_id from t_patient_doctor_mapping WHERE fk_doctor_id = ?";
-	public static final String PATIENTS_WITH_IDS = "SELECT * FROM t_user JOIN t_patient ON t_user.pk_user_id=t_patient.fk_user_id WHERE t_user.is_deleted=0 AND fk_role_id=1 AND t_user.pk_user_id IN (?)";
+	public static final String PATIENTS_WITH_IDS = "SELECT * FROM t_user JOIN t_patient ON t_user.pk_user_id=t_patient.fk_user_id "
+			+ "WHERE t_user.is_deleted=0 AND fk_role_id=1 AND t_user.pk_user_id IN (?)";
 
 	public static final String JDBC_CONNECTION = "jdbc:mysql://localhost:3306/hospital";
 	public static final String JDBC_USERNAME = "root";
