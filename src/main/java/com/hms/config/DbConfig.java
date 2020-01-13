@@ -7,6 +7,8 @@ import java.sql.SQLException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.hms.constants.QueryConstants;
+
 /**
  * This Class is used to create a connection to Database using JDBC.
  *
@@ -24,7 +26,8 @@ public class DbConfig {
 	 *
 	 */
 	public DbConfig() throws SQLException {
-		connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/hospital", "root", "root");
+		connection = DriverManager.getConnection(QueryConstants.JDBC_CONNECTION, QueryConstants.JDBC_USERNAME,
+				QueryConstants.JDBC_PASSWORD);
 	}
 
 	/**

@@ -1,5 +1,7 @@
 package com.hms.delegate;
 
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -10,7 +12,7 @@ import com.hms.model.Patient;
 /**
  *
  * This class contains all the business logic for fulfilling the requests of
- * PatientService class.
+ * PatientApi class.
  *
  * @author Rahul
  *
@@ -30,10 +32,81 @@ public class PatientDelegate {
 	public Patient createPatient(Patient patient) throws UsernameAlreadyExistsException {
 		LOGGER.info(
 				"Enter the createPatient Delegate method with patient object with username: " + patient.getUsername());
-		Patient createdPatient = patientHelper.createPatient(patient);
-		createdPatient.setPassword(null);
-		LOGGER.info("Enter the createPatient Delegate method with patient object with userid: "
-				+ createdPatient.getUserId());
-		return createdPatient;
+		Patient createdPatient;
+		try {
+			createdPatient = patientHelper.createPatient(patient);
+			createdPatient.setPassword(null);
+			LOGGER.info("Enter the createPatient Delegate method with patient object with userid: "
+					+ createdPatient.getUserId());
+			return createdPatient;
+		} catch (UsernameAlreadyExistsException e) {
+			throw new UsernameAlreadyExistsException("Username already exists", e);
+		}
+
+	}
+
+	/**
+	 * Outputs a list of patient objects.
+	 *
+	 * @return list of patients.
+	 */
+	public List<Patient> readPatients() {
+		LOGGER.info("Enter the readPatients Delegate method");
+		List<Patient> patients = patientHelper.readPatients();
+		for (Patient patient : patients) {
+			patient.setPassword(null);
+		}
+		LOGGER.info("Exit the readPatients Delegate method");
+		return patients;
+	}
+
+	/**
+	 * Outputs a of patient object with userId = id.
+	 *
+	 * @param id userId from patientService.
+	 * @return patients with userId = id.
+	 */
+	public Patient readPatient(int id) {
+		LOGGER.info("Enter the readPatient Delegate method with id: " + id);
+		Patient patient = patientHelper.readPatient(id);
+		patient.setPassword(null);
+		LOGGER.info("Exit the readPatient Delegate method");
+		return patient;
+	}
+
+	/**
+	 * This method is used to update a given patient's info in the Helper.
+	 *
+	 * @param patient who needs to be updated.
+	 * @return true if patient updated else throw an exception.
+	 */
+	public boolean updatePatient(Patient patient) {
+		LOGGER.info("Entered the updatePatient Helper method with id: " + patient.getUserId());
+		boolean status = patientHelper.updatePatient(patient);
+		if (status) {
+			LOGGER.info("Exited the updatePatient Helper method");
+			return status;
+		} else {
+//			Exception should be thrown.
+			return false;
+		}
+	}
+
+	/**
+	 * This method is used to delete a given patient in the Helper.
+	 *
+	 * @param patient who needs to be delete.
+	 * @return true if patient deleted else throw an exception.
+	 */
+	public boolean deletePatient(Patient patient) {
+		LOGGER.info("Entered the deletePatient Helper method with id: " + patient.getUserId());
+		boolean status = patientHelper.deletePatient(patient);
+		if (status) {
+			LOGGER.info("Exited the deletePatient Helper method");
+			return status;
+		} else {
+//			Exception should be thrown.
+			return false;
+		}
 	}
 }

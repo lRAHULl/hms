@@ -1,12 +1,20 @@
 package com.hms.exception;
 
+import javax.ws.rs.core.Response;
+import javax.ws.rs.ext.ExceptionMapper;
+import javax.ws.rs.ext.Provider;
+
+import com.hms.constants.ResponseConstants;
+
 /**
  * A custom client error to denote that the userName already exists.
  *
  * @author Rahul
  *
  */
-public class UsernameAlreadyExistsException extends Exception {
+@Provider
+public class UsernameAlreadyExistsException extends Exception
+		implements ExceptionMapper<UsernameAlreadyExistsException> {
 
 	private static final long serialVersionUID = 1L;
 
@@ -56,6 +64,15 @@ public class UsernameAlreadyExistsException extends Exception {
 	 */
 	public UsernameAlreadyExistsException(Throwable cause) {
 		super(cause);
+	}
+
+	/**
+	 * @return Error Response for UsernameAlreadyExistsException.
+	 */
+	@Override
+	public Response toResponse(UsernameAlreadyExistsException exception) {
+		return Response.status(ResponseConstants.CLIENT_ERROR).entity(exception.getMessage()).type("text/plain")
+				.build();
 	}
 
 }

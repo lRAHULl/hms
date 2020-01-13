@@ -1,5 +1,7 @@
 package com.hms.helper;
 
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,6 +38,57 @@ public class PatientHelper {
 		Patient createdPatient = patientDao.createPatient(patient);
 		LOGGER.info("exited the createPatient Helper with patient object with id: " + createdPatient.getUserId());
 		return createdPatient;
+	}
+
+	/**
+	 * Outputs all the Patients from the DAO method.
+	 *
+	 * @return list of patients to the delegate layer.
+	 */
+	public List<Patient> readPatients() {
+		LOGGER.info("Entered the readPatients Helper method");
+		List<Patient> patients = patientDao.readPatients();
+		LOGGER.info("Exited the readPatients Helper method");
+		return patients;
+	}
+
+	/**
+	 * Gets the Patient with a given id from the PatientDAO.
+	 *
+	 * @param id of the patient.
+	 * @return Patient with id from the PatientDAO.
+	 */
+	public Patient readPatient(int id) {
+		LOGGER.info("Entered the readPatient Helper method with id: " + id);
+		Patient patient = patientDao.readPatient(id);
+		LOGGER.info("Exited the readPatient Helper method");
+		return patient;
+	}
+
+	/**
+	 * This method is used to update a given patient's info in the DAO.
+	 *
+	 * @param patient who needs to be updated.
+	 * @return true if patient updated else false.
+	 */
+	public boolean updatePatient(Patient patient) {
+		LOGGER.info("Entered the updatePatient Helper method with id: " + patient.getUserId());
+		boolean status = patientDao.updatePatient(patient);
+		LOGGER.info("Exited the updatePatient Helper method");
+		return status;
+	}
+
+	/**
+	 * This method is used to delete a given patient's info in the DAO.
+	 *
+	 * @param patient who needs to be deleted.
+	 * @return true if patient deleted else false.
+	 */
+	public boolean deletePatient(Patient patient) {
+		LOGGER.info("Entered the deletePatient Helper method with id: " + patient.getUserId());
+		boolean status = patientDao.deletePatient(patient.getUserId());
+		LOGGER.info("Exited the deletePatient Helper method");
+		return status;
 	}
 
 }
