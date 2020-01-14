@@ -2,8 +2,8 @@ package com.hms.helper;
 
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.hms.dao.PatientDao;
 import com.hms.exception.UsernameAlreadyExistsException;
@@ -19,7 +19,7 @@ import com.hms.model.Patient;
  */
 public class PatientHelper {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(PatientHelper.class);
+	private static final Logger LOGGER = LogManager.getLogger(PatientHelper.class);
 
 	private PatientDao patientDao = new PatientDao();
 

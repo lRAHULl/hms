@@ -8,8 +8,8 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.hms.config.DbConfig;
 import com.hms.constants.NumberConstants;
@@ -26,7 +26,7 @@ import com.hms.model.Patient;
  */
 public class PatientDao {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(PatientDao.class);
+	private static final Logger LOGGER = LogManager.getLogger(PatientDao.class);
 
 	/**
 	 * This method creates a patient in the database.

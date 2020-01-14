@@ -11,8 +11,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.hms.config.DbConfig;
 import com.hms.constants.NumberConstants;
@@ -30,7 +30,7 @@ import com.hms.model.Patient;
  *
  */
 public class DoctorDao {
-	private static final Logger LOGGER = LoggerFactory.getLogger(DoctorDao.class);
+	private static final Logger LOGGER = LogManager.getLogger(DoctorDao.class);
 
 	/**
 	 *
@@ -41,7 +41,7 @@ public class DoctorDao {
 	 * @throws UsernameAlreadyExistsException custom exception.
 	 * @throws SQLException                   system generated SQL exception.
 	 */
-	public Doctor createDoctor(Doctor doctor) throws UsernameAlreadyExistsException, SQLException {
+	public static Doctor createDoctor(Doctor doctor) throws UsernameAlreadyExistsException, SQLException {
 		LOGGER.trace("Enter the createDoctor with id: " + doctor.getUserId());
 		PreparedStatement userInsertStatement, doctorInsertStatement;
 		DbConfig dbConfig = null;
@@ -64,7 +64,8 @@ public class DoctorDao {
 			if (rowsAffected == NumberConstants.ONE) {
 				ResultSet generatedResultSet = userInsertStatement.getGeneratedKeys();
 				int userId = NumberConstants.ZERO;
-				if (generatedResultSet.next()) {
+				// FIX : ADD A NULL CHECK - DONE
+				if (generatedResultSet != null && generatedResultSet.next()) {
 					userId = generatedResultSet.getInt(NumberConstants.ONE);
 				}
 				doctorInsertStatement = connection.prepareStatement(QueryConstants.DOCTOR_INSERT_QUERY);
@@ -109,7 +110,7 @@ public class DoctorDao {
 	 * @throws UserNotFoundException Custom Exception for no user with that id.
 	 * @throws SQLException          SQL server error.
 	 */
-	public List<Doctor> readDoctors() throws SQLException {
+	public static List<Doctor> readDoctors() throws SQLException {
 		LOGGER.trace("Inside the readDoctors DAO method");
 		DbConfig dbConfig = null;
 		Connection connection = null;
@@ -167,7 +168,7 @@ public class DoctorDao {
 	 * @throws UserNotFoundException Custom Exception for no user with that id.
 	 * @throws SQLException          Exception thrown by SQL.
 	 */
-	public Doctor readDoctor(int id) throws UserNotFoundException, SQLException {
+	public static Doctor readDoctor(int id) throws UserNotFoundException, SQLException {
 		LOGGER.trace("Inside the readDoctor DAO method");
 		DbConfig dbConfig = null;
 		Connection connection = null;
@@ -183,11 +184,8 @@ public class DoctorDao {
 			doctorReadStatement.setInt(NumberConstants.ONE, id);
 			resultSet = doctorReadStatement.executeQuery();
 
-			if (resultSet == null) {
-				throw new UserNotFoundException("User with the given id not found");
-			}
-
-			if (resultSet.next()) {
+			// FIX : ADD LOGIC BASED CHECKS IN HELPER
+			if (resultSet != null && resultSet.next()) {
 				doctor = new Doctor();
 				doctor.setUsername(resultSet.getString(QueryConstants.USERNAME));
 				doctor.setPassword(resultSet.getString(QueryConstants.PASSWORD));
@@ -224,7 +222,7 @@ public class DoctorDao {
 	 * @return true if doctor deleted else false.
 	 * @throws SQLException system generated SQL exception.
 	 */
-	public boolean deleteDoctor(int id) throws SQLException {
+	public static boolean deleteDoctor(int id) throws SQLException {
 		LOGGER.trace("Inside the deleteDoctor DAO method for patient with id: " + id);
 		DbConfig dbConfig = null;
 		Connection connection = null;
@@ -276,7 +274,7 @@ public class DoctorDao {
 	 * @return List of patients for that doctor.
 	 * @throws SQLException SQL server error.
 	 */
-	public List<Patient> patientsForDoctor(int id) throws SQLException {
+	public static List<Patient> patientsForDoctor(int id) throws SQLException {
 		LOGGER.trace("Inside patientsForDoctor DAO method");
 		DbConfig dbConfig = null;
 		Connection connection = null;
@@ -334,7 +332,7 @@ public class DoctorDao {
 	 * @return Map of patients to doctors.
 	 * @throws SQLException System exception.
 	 */
-	public Map<Integer, List<Patient>> patientsForDoctors() throws SQLException {
+	public static Map<Integer, List<Patient>> patientsForDoctors() throws SQLException {
 		LOGGER.trace("Inside patientsForDoctors DAO method");
 		DbConfig dbConfig = null;
 		Connection connection = null;

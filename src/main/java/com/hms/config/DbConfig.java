@@ -4,8 +4,8 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.hms.constants.QueryConstants;
 
@@ -17,7 +17,7 @@ import com.hms.constants.QueryConstants;
  */
 public class DbConfig {
 	private Connection connection;
-	private static final Logger LOGGER = LoggerFactory.getLogger(DbConfig.class);
+	private static final Logger LOGGER = LogManager.getLogger(DbConfig.class);
 
 	/**
 	 * The Constructor of this class creates a connection after calling the class.

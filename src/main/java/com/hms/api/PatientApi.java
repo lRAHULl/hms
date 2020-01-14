@@ -13,14 +13,14 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.hms.constants.ResponseConstants;
 import com.hms.delegate.PatientDelegate;
 import com.hms.exception.UsernameAlreadyExistsException;
-import com.hms.model.ResponseBody;
 import com.hms.model.Patient;
+import com.hms.model.ResponseBody;
 
 /**
  *
@@ -32,7 +32,7 @@ import com.hms.model.Patient;
 @Path("/patients")
 public class PatientApi {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(PatientApi.class);
+	private static final Logger LOGGER = LogManager.getLogger(PatientApi.class);
 
 	private PatientDelegate patientDelegate = new PatientDelegate();
 
@@ -48,6 +48,7 @@ public class PatientApi {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public ResponseBody createPatient(Patient patient) throws UsernameAlreadyExistsException {
+		// FIX: USE LOG4J TRACE ENTRY AND EXIT LOGS
 		LOGGER.info("Entered the createPatient Service with patient object of username: " + patient.getUsername());
 		Patient createdPatient = patientDelegate.createPatient(patient);
 		ResponseBody response = new ResponseBody();

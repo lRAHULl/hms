@@ -17,7 +17,7 @@ import com.hms.constants.ResponseConstants;
 public class HmsBusinessException extends Exception implements ExceptionMapper<HmsBusinessException> {
 
 	/**
-	 * Serialisation id.
+	 * Serialization id.
 	 */
 	private static final long serialVersionUID = 1L;
 

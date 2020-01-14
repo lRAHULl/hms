@@ -2,6 +2,7 @@ package com.hms.api;
 
 import java.util.List;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -13,9 +14,10 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
+import com.hms.constants.LoggerConstants;
 import com.hms.constants.ResponseConstants;
 import com.hms.delegate.DoctorDelegate;
 import com.hms.exceptionmapper.HmsBusinessException;
@@ -33,9 +35,8 @@ import com.hms.model.ResponseBody;
 @Path("/doctors")
 public class DoctorApi {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(DoctorApi.class);
-
-	private DoctorDelegate doctorDelegate = new DoctorDelegate();
+	private static final Logger LOGGER = LogManager.getLogger(DoctorApi.class);
+	private static final ResourceBundle MESSAGE_BUNDLE = ResourceBundle.getBundle(LoggerConstants.LOGGER_MESSAGES);
 
 	/**
 	 * POST /doctors/ creates a patient.
@@ -50,12 +51,14 @@ public class DoctorApi {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public ResponseBody createDoctor(Doctor doctor) throws HmsSystemException, HmsBusinessException {
-		LOGGER.trace("Entered the createDoctor Service with patient object of username: " + doctor.getUsername());
-		Doctor createdDoctor = doctorDelegate.createDoctor(doctor);
+		// FIX : USE CONSTANTS FOR MESSAGES
+		LOGGER.entry(doctor.getUsername());
+		// FIX : USE STATIC METHODS
+		Doctor createdDoctor = DoctorDelegate.createDoctor(doctor);
 		ResponseBody response = new ResponseBody();
 		response.setStatus(ResponseConstants.SUCCESS);
 		response.setData(createdDoctor);
-		LOGGER.trace("Entered the createDoctor Service with response status: " + response.getStatus());
+		LOGGER.entry(response.getStatus());
 		return response;
 	}
 
@@ -70,12 +73,12 @@ public class DoctorApi {
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON)
 	public ResponseBody readDoctors() throws HmsBusinessException, HmsSystemException {
-		LOGGER.trace("Enter the readDoctors Service method");
-		List<Doctor> doctors = doctorDelegate.readDoctors();
+		LOGGER.entry(MESSAGE_BUNDLE.getString("HMS000T"));
+		List<Doctor> doctors = DoctorDelegate.readDoctors();
 		ResponseBody response = new ResponseBody();
 		response.setStatus(ResponseConstants.SUCCESS);
 		response.setData(doctors);
-		LOGGER.trace("Exit the readDoctors Service method");
+		LOGGER.entry("Exit the readDoctors Service method");
 		return response;
 	}
 
@@ -91,12 +94,12 @@ public class DoctorApi {
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public ResponseBody readDoctor(@PathParam("id") int id) throws HmsBusinessException, HmsSystemException {
-		LOGGER.trace("Enter the readDoctor Service method with id: " + id);
-		Doctor doctor = doctorDelegate.readDoctor(id);
+		LOGGER.entry("Enter the readDoctor Service method with id: " + id);
+		Doctor doctor = DoctorDelegate.readDoctor(id);
 		ResponseBody response = new ResponseBody();
 		response.setStatus(ResponseConstants.SUCCESS);
 		response.setData(doctor);
-		LOGGER.trace("Exit the readDoctor Service method");
+		LOGGER.entry("Exit the readDoctor Service method");
 		return response;
 
 	}
@@ -114,9 +117,9 @@ public class DoctorApi {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response deleteDoctor(Doctor doctor) throws HmsBusinessException, HmsSystemException {
-		LOGGER.trace("Enter the deleteDoctor Service method with id: " + doctor.getUserId());
-		boolean status = doctorDelegate.deleteDoctor(doctor);
-		LOGGER.trace("Exit the deleteDoctor Service method");
+		LOGGER.entry("Enter the deleteDoctor Service method with id: " + doctor.getUserId());
+		boolean status = DoctorDelegate.deleteDoctor(doctor);
+		LOGGER.entry("Exit the deleteDoctor Service method");
 		return Response.status(ResponseConstants.SUCCESS_WITHOUT_RESPONSE).entity(status).build();
 	}
 
@@ -132,12 +135,12 @@ public class DoctorApi {
 	@Path("/{id}/patients")
 	@Produces(MediaType.APPLICATION_JSON)
 	public ResponseBody getPatientsForDoctor(@PathParam("id") int id) throws HmsSystemException, HmsBusinessException {
-		LOGGER.trace("Enter the getPatientsForDoctor method with doctorId: " + id);
-		List<Patient> patients = doctorDelegate.patientsForDoctor(id);
+		LOGGER.entry("Enter the getPatientsForDoctor method with doctorId: " + id);
+		List<Patient> patients = DoctorDelegate.patientsForDoctor(id);
 		ResponseBody response = new ResponseBody();
 		response.setStatus(ResponseConstants.SUCCESS);
 		response.setData(patients);
-		LOGGER.trace("Exit the getPatientsForDoctor method");
+		LOGGER.entry("Exit the getPatientsForDoctor method");
 		return response;
 	}
 
@@ -152,12 +155,12 @@ public class DoctorApi {
 	@Path("/getPatients")
 	@Produces(MediaType.APPLICATION_JSON)
 	public ResponseBody patientsForDoctors() throws HmsSystemException, HmsBusinessException {
-		LOGGER.trace("Enter the patientsForDoctors method.");
-		Map<Integer, List<Patient>> map = doctorDelegate.patientsForDoctors();
+		LOGGER.traceEntry();
+		Map<Integer, List<Patient>> map = DoctorDelegate.patientsForDoctors();
 		ResponseBody response = new ResponseBody();
 		response.setStatus(ResponseConstants.SUCCESS);
 		response.setData(map);
-		LOGGER.trace("Exit the patientsForDoctors method.");
+		LOGGER.traceExit();
 		return response;
 	}
 }
