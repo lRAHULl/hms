@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -38,8 +39,9 @@ public class DoctorDao {
 	 * @param doctor object.
 	 * @return The Doctor object with the generated userId.
 	 * @throws UsernameAlreadyExistsException custom exception.
+	 * @throws SQLException
 	 */
-	public Doctor createDoctor(Doctor doctor) throws UsernameAlreadyExistsException {
+	public Doctor createDoctor(Doctor doctor) throws UsernameAlreadyExistsException, SQLException {
 		LOGGER.trace("Enter the createDoctor with id: " + doctor.getUserId());
 		PreparedStatement userInsertStatement, doctorInsertStatement;
 		DbConfig dbConfig = null;
@@ -81,21 +83,23 @@ public class DoctorDao {
 					return doctor;
 				} else {
 					connection.rollback();
-					throw new UsernameAlreadyExistsException("User with username already existd");
 				}
 			} else {
 				connection.rollback();
-				throw new UsernameAlreadyExistsException("User with username already existd");
 			}
-		} catch (SQLException e) {
-			LOGGER.trace("Exited the createPatient DAO method");
+		} catch (SQLIntegrityConstraintViolationException e) {
 			throw new UsernameAlreadyExistsException("User with username already existd");
+		} catch (SQLException e) {
+			LOGGER.trace("Exited the createPatient DAO method" + e.getMessage());
+			throw new SQLException("SQL server error");
+		} catch (Exception e) {
+			throw new SQLException("SQL server error" + e.getMessage());
 		} finally {
 			if (connection != null) {
 				dbConfig.closeConnection();
 			}
 		}
-
+		return null;
 	}
 
 	/**
@@ -213,8 +217,9 @@ public class DoctorDao {
 	 *
 	 * @param id of the doctor who needs to be deleted.
 	 * @return true if doctor deleted else false.
+	 * @throws SQLException
 	 */
-	public boolean deleteDoctor(int id) {
+	public boolean deleteDoctor(int id) throws SQLException {
 		LOGGER.trace("Inside the deleteDoctor DAO method for patient with id: " + id);
 		DbConfig dbConfig = null;
 		Connection connection = null;
@@ -248,7 +253,9 @@ public class DoctorDao {
 			}
 
 		} catch (SQLException e) {
-
+			throw new SQLException("SQL Error: " + e.getMessage());
+		} catch (Exception e) {
+			throw new SQLException("SQL Error: " + e.getMessage());
 		} finally {
 			if (connection != null) {
 				dbConfig.closeConnection();
@@ -263,8 +270,9 @@ public class DoctorDao {
 	 *
 	 * @param id of the doctor.
 	 * @return list of ids of patients for the given doctor.
+	 * @throws SQLException
 	 */
-	public List<Integer> getPatientsForAGivenDoctor(int id) {
+	public List<Integer> getPatientsForAGivenDoctor(int id) throws SQLException {
 		LOGGER.trace("Inside the getPatientsForAGivenDoctor method for doctorId: " + id);
 		DbConfig dbConfig = null;
 		Connection connection = null;
@@ -286,13 +294,14 @@ public class DoctorDao {
 			}
 			return patientIds;
 		} catch (SQLException e) {
+			throw new SQLException("SQL Error: " + e.getMessage());
+		} catch (Exception e) {
+			throw new SQLException("SQL Error: " + e.getMessage());
 		} finally {
 			if (connection != null) {
 				dbConfig.closeConnection();
 			}
 		}
-		LOGGER.trace("Exited the getPatientsForAGivenDoctor DAO method");
-		return null;
 
 	}
 
@@ -355,6 +364,11 @@ public class DoctorDao {
 
 	}
 
+	/**
+	 *
+	 * @return Map of patients to doctors.
+	 * @throws SQLException System exception.
+	 */
 	public Map<Integer, List<Patient>> patientsForDoctors() throws SQLException {
 		LOGGER.trace("Inside patientsForDoctors DAO method");
 		DbConfig dbConfig = null;
@@ -395,7 +409,9 @@ public class DoctorDao {
 			}
 			return doctorPatientsMap;
 		} catch (SQLException e) {
-			throw e;
+			throw new SQLException("SQL Error: " + e.getMessage());
+		} catch (Exception e) {
+			throw new SQLException("SQL Error: " + e.getMessage());
 		} finally {
 			if (connection != null) {
 				dbConfig.closeConnection();

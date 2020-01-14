@@ -85,33 +85,21 @@ public class DoctorDelegate {
 	 * @param doctor who needs to be delete.
 	 * @return true if doctor deleted else throw an exception.
 	 * @throws HmsBusinessException generic client exception.
+	 * @throws HmsSystemException
 	 */
-	public boolean deleteDoctor(Doctor doctor) throws HmsBusinessException {
+	public boolean deleteDoctor(Doctor doctor) throws HmsBusinessException, HmsSystemException {
 		LOGGER.info("Entered the deleteDoctor Helper method with id: " + doctor.getUserId());
 		boolean status = doctorHelper.deleteDoctor(doctor);
-		if (!status) {
-//			Exception should be thrown.
-//			return false;
-			throw new HmsBusinessException();
-		}
 		return status;
 	}
 
 	/**
-	 * This method takes doctorId as input and return list of patients under that
-	 * doctor.
 	 *
-	 * @param id of the doctor.
-	 * @return list of patients.
+	 * @return Map of patients and doctors.
+	 * @throws HmsSystemException   Generic System exception.
+	 * @throws HmsBusinessException Generic Client Exception.
 	 */
-	public List<Patient> getPatientsForADoctor(int id) {
-		String ids = doctorHelper.getPatientsIdForAGivenDoctorId(id);
-		LOGGER.error(ids);
-		List<Patient> patients = doctorHelper.getPatientsWithIds(ids);
-		return patients;
-	}
-
-	public Map<Integer, List<Patient>> patientsForDoctors() throws HmsSystemException {
+	public Map<Integer, List<Patient>> patientsForDoctors() throws HmsSystemException, HmsBusinessException {
 		Map<Integer, List<Patient>> map = doctorHelper.patientsForDoctors();
 		return map;
 	}

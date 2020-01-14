@@ -106,12 +106,13 @@ public class DoctorApi {
 	 * @param doctor who needs to be deleted.
 	 * @return JSON response of the data and statusCode.
 	 * @throws HmsBusinessException generic client exception.
+	 * @throws HmsSystemException
 	 */
 	@DELETE
 	@Path("/")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response deleteDoctor(Doctor doctor) throws HmsBusinessException {
+	public Response deleteDoctor(Doctor doctor) throws HmsBusinessException, HmsSystemException {
 		LOGGER.info("Enter the deleteDoctor Service method with id: " + doctor.getUserId());
 		boolean status = doctorDelegate.deleteDoctor(doctor);
 		LOGGER.info("Exit the deleteDoctor Service method");
@@ -123,12 +124,15 @@ public class DoctorApi {
 	 *
 	 * @param id from the pathParam which is the id of the doctor.
 	 * @return response of the data if successful.
+	 * @throws HmsSystemException
+	 * @throws HmsBusinessException
 	 */
 	@GET
 	@Path("/{id}/patients")
 	@Produces(MediaType.APPLICATION_JSON)
-	public ResponseBody getPatientsForADoctor(@PathParam("id") int id) {
-		List<Patient> patients = doctorDelegate.getPatientsForADoctor(id);
+	public ResponseBody getPatientsForADoctor(@PathParam("id") int id) throws HmsSystemException, HmsBusinessException {
+		Map<Integer, List<Patient>> map = doctorDelegate.patientsForDoctors();
+		List<Patient> patients = map.get(id);
 		ResponseBody response = new ResponseBody();
 		response.setStatus(ResponseConstants.SUCCESS);
 		response.setData(patients);
@@ -138,7 +142,7 @@ public class DoctorApi {
 	@GET
 	@Path("/getPatients")
 	@Produces(MediaType.APPLICATION_JSON)
-	public ResponseBody patientsForDoctors() throws HmsSystemException {
+	public ResponseBody patientsForDoctors() throws HmsSystemException, HmsBusinessException {
 		Map<Integer, List<Patient>> map = doctorDelegate.patientsForDoctors();
 		ResponseBody response = new ResponseBody();
 		response.setStatus(ResponseConstants.SUCCESS);

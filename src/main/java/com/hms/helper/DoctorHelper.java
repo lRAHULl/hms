@@ -104,63 +104,45 @@ public class DoctorHelper {
 	 *
 	 * @param doctor who needs to be deleted.
 	 * @return true if doctor deleted else false.
+	 * @throws HmsSystemException
+	 * @throws HmsBusinessException
 	 */
-	public boolean deleteDoctor(Doctor doctor) {
+	public boolean deleteDoctor(Doctor doctor) throws HmsSystemException, HmsBusinessException {
 		LOGGER.trace("Entered the deleteDoctor Helper method with id: " + doctor.getUserId());
-		boolean status = doctorDao.deleteDoctor(doctor.getUserId());
+		boolean status;
+		try {
+			status = doctorDao.deleteDoctor(doctor.getUserId());
+		} catch (SQLException e) {
+			throw new HmsSystemException("SQL Exception Ocurred");
+		} catch (Exception e) {
+			throw new HmsSystemException("System Error");
+		}
+		if (!status) {
+			throw new HmsBusinessException("User with Id not found.");
+		}
 		LOGGER.trace("Exited the deletePatient Helper method");
 		return status;
 	}
 
 	/**
-	 * This method takes doctor id and returns a list of csv patientIds.
-	 *
-	 * @param id of the doctor.
-	 * @return string of comma-separated patientIds for the doctor.
-	 */
-	public String getPatientsIdForAGivenDoctorId(int id) {
-		LOGGER.trace("Entered the getPatientsIdForAGivenDoctorId Helper method with id: " + id);
-		List<Integer> patientIds = doctorDao.getPatientsForAGivenDoctor(id);
-		String result = "";
-
-		for (int pId = 0; pId < patientIds.size(); pId++) {
-			if (pId < patientIds.size() - 1) {
-				result += patientIds.get(pId) + ",";
-			} else {
-				result += patientIds.get(pId);
-			}
-		}
-		LOGGER.trace("Exit the getPatientsIdForAGivenDoctorId with result: " + result);
-		return result;
-	}
-
-	/**
-	 * This method returns a list of patient for the given doctor.
-	 *
-	 * @param ids as string for the given doctor.
-	 * @return list of patients for the doctor.
-	 */
-	public List<Patient> getPatientsWithIds(String ids) {
-		List<Patient> patients = doctorDao.getPatientsWithIds(ids);
-		for (Patient patient : patients) {
-			patient.setPassword(null);
-		}
-		return patients;
-	}
-
-	/**
 	 *
 	 * @return map of doctors and list of patients.
-	 * @throws HmsSystemException generic System Exception.
+	 * @throws HmsSystemException   generic System Exception.
+	 * @throws HmsBusinessException
 	 */
-	public Map<Integer, List<Patient>> patientsForDoctors() throws HmsSystemException {
+	public Map<Integer, List<Patient>> patientsForDoctors() throws HmsSystemException, HmsBusinessException {
+		Map<Integer, List<Patient>> map = null;
 		try {
-			Map<Integer, List<Patient>> map = doctorDao.patientsForDoctors();
-			return map;
+			map = doctorDao.patientsForDoctors();
+
 		} catch (SQLException e) {
 			throw new HmsSystemException("SQL Error");
 		} catch (Exception e) {
 			throw new HmsSystemException("System Error");
 		}
+		if (map == null) {
+			throw new HmsBusinessException("No Users Found.");
+		}
+		return map;
 	}
 }
