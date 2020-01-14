@@ -49,8 +49,10 @@ public class DoctorHelper {
 			LOGGER.trace("exited the createDoctor Helper with doctor object with id: " + createdDoctor.getUserId());
 			return createdDoctor;
 		} catch (UsernameAlreadyExistsException e) {
+			LOGGER.warn("User cannot be added: " + e.getMessage());
 			throw new HmsBusinessException(e.getMessage());
 		} catch (Exception e) {
+			LOGGER.debug("System Error Occured.");
 			throw new HmsSystemException("System Fail");
 		}
 	}
@@ -59,14 +61,23 @@ public class DoctorHelper {
 	 * Outputs all the doctors from the DAO method.
 	 *
 	 * @return list of doctors to the delegate layer.
-	 * @throws UserNotFoundException custom exception.
+	 * @throws HmsBusinessException generic Client Exception.
+	 * @throws HmsSystemException   generic Business Exception.
 	 */
-	public List<Doctor> readDoctors() throws UserNotFoundException {
+	public List<Doctor> readDoctors() throws HmsBusinessException, HmsSystemException {
 		LOGGER.trace("Entered the readDoctors Helper method");
-		List<Doctor> doctors = doctorDao.readDoctors();
-		for (Doctor doctor : doctors) {
-			doctor.setPassword(null);
+		List<Doctor> doctors = null;
+		try {
+			doctors = doctorDao.readDoctors();
+		} catch (SQLException e) {
+			throw new HmsSystemException("SQL error: " + e.getMessage());
+		} catch (Exception e) {
+			throw new HmsSystemException("System Error: " + e.getMessage());
 		}
+		if (doctors == null) {
+			throw new HmsBusinessException("No users found.");
+		}
+
 		LOGGER.trace("Exited the readDoctors Helper method");
 		return doctors;
 	}
@@ -88,10 +99,13 @@ public class DoctorHelper {
 				doctor.setPassword(null);
 			}
 		} catch (UserNotFoundException e) {
+			LOGGER.warn("User cannot be read" + e.getMessage());
 			throw new HmsBusinessException(e.getMessage());
 		} catch (SQLException e) {
+			LOGGER.debug("SQL error occurred: " + e.getMessage());
 			throw new HmsSystemException("SQL exception occured");
 		} catch (Exception e) {
+			LOGGER.debug("System Fail: " + e.getMessage());
 			throw new HmsSystemException("System failed");
 		}
 
@@ -104,8 +118,8 @@ public class DoctorHelper {
 	 *
 	 * @param doctor who needs to be deleted.
 	 * @return true if doctor deleted else false.
-	 * @throws HmsSystemException
-	 * @throws HmsBusinessException
+	 * @throws HmsSystemException   generic system exception.
+	 * @throws HmsBusinessException generic client exception.
 	 */
 	public boolean deleteDoctor(Doctor doctor) throws HmsSystemException, HmsBusinessException {
 		LOGGER.trace("Entered the deleteDoctor Helper method with id: " + doctor.getUserId());
@@ -113,11 +127,14 @@ public class DoctorHelper {
 		try {
 			status = doctorDao.deleteDoctor(doctor.getUserId());
 		} catch (SQLException e) {
-			throw new HmsSystemException("SQL Exception Ocurred");
+			LOGGER.debug("Some SQL error occured: " + e.getMessage());
+			throw new HmsSystemException("SQL Exception Ocurred: " + e.getMessage());
 		} catch (Exception e) {
+			LOGGER.debug("System Failed: " + e.getMessage());
 			throw new HmsSystemException("System Error");
 		}
 		if (!status) {
+			LOGGER.warn("User is not found to delete.");
 			throw new HmsBusinessException("User with Id not found.");
 		}
 		LOGGER.trace("Exited the deletePatient Helper method");
@@ -126,23 +143,56 @@ public class DoctorHelper {
 
 	/**
 	 *
+	 * @param id of the doctor.
+	 * @return List of patients of that doctor.
+	 * @throws HmsBusinessException generic Client Exception.
+	 * @throws HmsSystemException   generic System Exception.
+	 */
+	public List<Patient> patientsForDoctor(int id) throws HmsBusinessException, HmsSystemException {
+		LOGGER.trace("Enter the patientsForDoctors method with id: " + id);
+		List<Patient> patients = null;
+
+		try {
+			patients = doctorDao.patientsForDoctor(id);
+		} catch (SQLException e) {
+			LOGGER.debug("Some SQL error occured: " + e.getMessage());
+			throw new HmsSystemException("SQL Error: " + e.getMessage());
+		} catch (Exception e) {
+			LOGGER.debug("System Failed: " + e.getMessage());
+			throw new HmsSystemException("System Error: " + e.getMessage());
+		}
+
+		if (patients.size() == 0) {
+			LOGGER.warn("No Patients Found");
+			throw new HmsBusinessException("No Patients Found.");
+		}
+		LOGGER.trace("Exit the patientsForDoctors method");
+		return patients;
+
+	}
+
+	/**
+	 *
 	 * @return map of doctors and list of patients.
 	 * @throws HmsSystemException   generic System Exception.
-	 * @throws HmsBusinessException
+	 * @throws HmsBusinessException generic client Exception.
 	 */
 	public Map<Integer, List<Patient>> patientsForDoctors() throws HmsSystemException, HmsBusinessException {
+		LOGGER.trace("Enter the patientsForDoctors method");
 		Map<Integer, List<Patient>> map = null;
 		try {
 			map = doctorDao.patientsForDoctors();
-
 		} catch (SQLException e) {
-			throw new HmsSystemException("SQL Error");
+			LOGGER.debug("Some SQL error occured: " + e.getMessage());
+			throw new HmsSystemException("SQL Error: " + e.getMessage());
 		} catch (Exception e) {
-			throw new HmsSystemException("System Error");
+			LOGGER.debug("System Failed: " + e.getMessage());
+			throw new HmsSystemException("System Error: " + e.getMessage());
 		}
 		if (map == null) {
 			throw new HmsBusinessException("No Users Found.");
 		}
+		LOGGER.trace("Exit the patientsForDoctors method");
 		return map;
 	}
 }

@@ -40,12 +40,13 @@ public final class QueryConstants {
 			+ " ON t_user.pk_user_id=t_patient.fk_user_id "
 			+ "INNER JOIN t_patient_doctor_mapping as mapping where user.is_deleted=0 and mapping.is_deleted=0 and user.fk_role_id=1 and mapping.fk_doctor_id=?";
 
-	public static final String PATIENT_IDS_FOR_A_GIVEN_DOCTOR = "SELECT fk_patient_id from t_patient_doctor_mapping WHERE fk_doctor_id = ?";
-	public static final String PATIENTS_WITH_IDS = "SELECT * FROM t_user JOIN t_patient ON t_user.pk_user_id=t_patient.fk_user_id "
-			+ "WHERE t_user.is_deleted=0 AND fk_role_id=1 AND t_user.pk_user_id IN (?)";
-
-	public static final String PATIENTS_FOR_DOCTORS = "select * from t_user join t_patient_doctor_mapping on t_user.pk_user_id=t_patient_doctor_mapping.fk_patient_id "
+	public static final String PATIENTS_FOR_DOCTORS = "select * from t_user join t_patient on t_user.pk_user_id=t_patient.fk_user_id "
+			+ "join t_patient_doctor_mapping on t_user.pk_user_id=t_patient_doctor_mapping.fk_patient_id "
 			+ "join t_user as u on t_patient_doctor_mapping.fk_doctor_id=u.pk_user_id where u.is_deleted=0";
+
+	public static final String PATIENTS_FOR_DOCTOR = "select * from t_user join t_patient on t_user.pk_user_id=t_patient.fk_user_id "
+			+ "join t_patient_doctor_mapping on t_user.pk_user_id=t_patient_doctor_mapping.fk_patient_id join t_user as u on t_patient_doctor_mapping.fk_doctor_id=u.pk_user_id "
+			+ "where u.is_deleted=0 AND t_patient_doctor_mapping.fk_doctor_id=?";
 
 	public static final String JDBC_CONNECTION = "jdbc:mysql://localhost:3306/hospital";
 	public static final String JDBC_USERNAME = "root";

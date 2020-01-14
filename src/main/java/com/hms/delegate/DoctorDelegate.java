@@ -6,7 +6,6 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.hms.exception.UserNotFoundException;
 import com.hms.exceptionmapper.HmsBusinessException;
 import com.hms.exceptionmapper.HmsSystemException;
 import com.hms.helper.DoctorHelper;
@@ -36,10 +35,11 @@ public class DoctorDelegate {
 	 * @throws HmsBusinessException generic client exception.
 	 */
 	public Doctor createDoctor(Doctor doctor) throws HmsSystemException, HmsBusinessException {
-		LOGGER.info("Enter the createDoctor Delegate method with doctor object with username: " + doctor.getUsername());
+		LOGGER.trace(
+				"Enter the createDoctor Delegate method with doctor object with username: " + doctor.getUsername());
 		Doctor createdDoctor;
 		createdDoctor = doctorHelper.createDoctor(doctor);
-		LOGGER.info(
+		LOGGER.trace(
 				"Enter the createPatient Delegate method with doctor object with userid: " + createdDoctor.getUserId());
 		return createdDoctor;
 
@@ -50,16 +50,13 @@ public class DoctorDelegate {
 	 *
 	 * @return list of Doctors.
 	 * @throws HmsBusinessException Generic Client exception.
+	 * @throws HmsSystemException   Generic System Exception.
 	 */
-	public List<Doctor> readDoctors() throws HmsBusinessException {
-		LOGGER.info("Enter the readDoctors Delegate method");
-		List<Doctor> doctors;
-		try {
-			doctors = doctorHelper.readDoctors();
-		} catch (UserNotFoundException e) {
-			throw new HmsBusinessException("No users found.");
-		}
-		LOGGER.info("Exit the readDoctors Delegate method");
+	public List<Doctor> readDoctors() throws HmsBusinessException, HmsSystemException {
+		LOGGER.trace("Enter the readDoctors Delegate method");
+		List<Doctor> doctors = doctorHelper.readDoctors();
+
+		LOGGER.trace("Exit the readDoctors Delegate method");
 		return doctors;
 	}
 
@@ -72,10 +69,10 @@ public class DoctorDelegate {
 	 * @throws HmsSystemException   generic system exception.
 	 */
 	public Doctor readDoctor(int id) throws HmsBusinessException, HmsSystemException {
-		LOGGER.info("Enter the readDoctor Delegate method with id: " + id);
+		LOGGER.trace("Enter the readDoctor Delegate method with id: " + id);
 		Doctor doctor = null;
 		doctor = doctorHelper.readDoctor(id);
-		LOGGER.info("Exit the readDoctor Delegate method");
+		LOGGER.trace("Exit the readDoctor Delegate method");
 		return doctor;
 	}
 
@@ -85,12 +82,27 @@ public class DoctorDelegate {
 	 * @param doctor who needs to be delete.
 	 * @return true if doctor deleted else throw an exception.
 	 * @throws HmsBusinessException generic client exception.
-	 * @throws HmsSystemException
+	 * @throws HmsSystemException   generic system exception.
 	 */
 	public boolean deleteDoctor(Doctor doctor) throws HmsBusinessException, HmsSystemException {
-		LOGGER.info("Entered the deleteDoctor Helper method with id: " + doctor.getUserId());
+		LOGGER.trace("Entered the deleteDoctor Helper method with id: " + doctor.getUserId());
 		boolean status = doctorHelper.deleteDoctor(doctor);
+		LOGGER.trace("Exit the deleteDoctor method.");
 		return status;
+	}
+
+	/**
+	 *
+	 * @param id of the doctor.
+	 * @return List of patients for that doctor.
+	 * @throws HmsBusinessException Generic Client Exception.
+	 * @throws HmsSystemException   Generic System Exception.
+	 */
+	public List<Patient> patientsForDoctor(int id) throws HmsBusinessException, HmsSystemException {
+		LOGGER.trace("Enter the patientsForDoctor method with id: " + id);
+		List<Patient> patients = doctorHelper.patientsForDoctor(id);
+		LOGGER.trace("Exit the patientsForDoctor method");
+		return patients;
 	}
 
 	/**
@@ -100,7 +112,9 @@ public class DoctorDelegate {
 	 * @throws HmsBusinessException Generic Client Exception.
 	 */
 	public Map<Integer, List<Patient>> patientsForDoctors() throws HmsSystemException, HmsBusinessException {
+		LOGGER.trace("Enter the patientsForDoctors method.");
 		Map<Integer, List<Patient>> map = doctorHelper.patientsForDoctors();
+		LOGGER.trace("Exit the patientsForDoctor method.");
 		return map;
 	}
 }

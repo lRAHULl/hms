@@ -50,12 +50,12 @@ public class DoctorApi {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public ResponseBody createDoctor(Doctor doctor) throws HmsSystemException, HmsBusinessException {
-		LOGGER.info("Entered the createDoctor Service with patient object of username: " + doctor.getUsername());
+		LOGGER.trace("Entered the createDoctor Service with patient object of username: " + doctor.getUsername());
 		Doctor createdDoctor = doctorDelegate.createDoctor(doctor);
 		ResponseBody response = new ResponseBody();
 		response.setStatus(ResponseConstants.SUCCESS);
 		response.setData(createdDoctor);
-		LOGGER.info("Entered the createDoctor Service with response status: " + response.getStatus());
+		LOGGER.trace("Entered the createDoctor Service with response status: " + response.getStatus());
 		return response;
 	}
 
@@ -64,17 +64,18 @@ public class DoctorApi {
 	 *
 	 * @return JSON Response with data as a list of doctors.
 	 * @throws HmsBusinessException generic client exception.
+	 * @throws HmsSystemException   generic system exception.
 	 */
 	@GET
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON)
-	public ResponseBody readDoctors() throws HmsBusinessException {
-		LOGGER.info("Enter the readDoctors Service method");
+	public ResponseBody readDoctors() throws HmsBusinessException, HmsSystemException {
+		LOGGER.trace("Enter the readDoctors Service method");
 		List<Doctor> doctors = doctorDelegate.readDoctors();
 		ResponseBody response = new ResponseBody();
 		response.setStatus(ResponseConstants.SUCCESS);
 		response.setData(doctors);
-		LOGGER.info("Exit the readDoctors Service method");
+		LOGGER.trace("Exit the readDoctors Service method");
 		return response;
 	}
 
@@ -90,12 +91,12 @@ public class DoctorApi {
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public ResponseBody readDoctor(@PathParam("id") int id) throws HmsBusinessException, HmsSystemException {
-		LOGGER.info("Enter the readDoctor Service method with id: " + id);
+		LOGGER.trace("Enter the readDoctor Service method with id: " + id);
 		Doctor doctor = doctorDelegate.readDoctor(id);
 		ResponseBody response = new ResponseBody();
 		response.setStatus(ResponseConstants.SUCCESS);
 		response.setData(doctor);
-		LOGGER.info("Exit the readDoctor Service method");
+		LOGGER.trace("Exit the readDoctor Service method");
 		return response;
 
 	}
@@ -106,16 +107,16 @@ public class DoctorApi {
 	 * @param doctor who needs to be deleted.
 	 * @return JSON response of the data and statusCode.
 	 * @throws HmsBusinessException generic client exception.
-	 * @throws HmsSystemException
+	 * @throws HmsSystemException   generic system exception.
 	 */
 	@DELETE
 	@Path("/")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response deleteDoctor(Doctor doctor) throws HmsBusinessException, HmsSystemException {
-		LOGGER.info("Enter the deleteDoctor Service method with id: " + doctor.getUserId());
+		LOGGER.trace("Enter the deleteDoctor Service method with id: " + doctor.getUserId());
 		boolean status = doctorDelegate.deleteDoctor(doctor);
-		LOGGER.info("Exit the deleteDoctor Service method");
+		LOGGER.trace("Exit the deleteDoctor Service method");
 		return Response.status(ResponseConstants.SUCCESS_WITHOUT_RESPONSE).entity(status).build();
 	}
 
@@ -124,29 +125,39 @@ public class DoctorApi {
 	 *
 	 * @param id from the pathParam which is the id of the doctor.
 	 * @return response of the data if successful.
-	 * @throws HmsSystemException
-	 * @throws HmsBusinessException
+	 * @throws HmsSystemException   Generic System Exception.
+	 * @throws HmsBusinessException Generic Client Exception.
 	 */
 	@GET
 	@Path("/{id}/patients")
 	@Produces(MediaType.APPLICATION_JSON)
-	public ResponseBody getPatientsForADoctor(@PathParam("id") int id) throws HmsSystemException, HmsBusinessException {
-		Map<Integer, List<Patient>> map = doctorDelegate.patientsForDoctors();
-		List<Patient> patients = map.get(id);
+	public ResponseBody getPatientsForDoctor(@PathParam("id") int id) throws HmsSystemException, HmsBusinessException {
+		LOGGER.trace("Enter the getPatientsForDoctor method with doctorId: " + id);
+		List<Patient> patients = doctorDelegate.patientsForDoctor(id);
 		ResponseBody response = new ResponseBody();
 		response.setStatus(ResponseConstants.SUCCESS);
 		response.setData(patients);
+		LOGGER.trace("Exit the getPatientsForDoctor method");
 		return response;
 	}
 
+	/**
+	 * GET /getPatients/ all patients for all doctors.
+	 *
+	 * @return Response of the data if successful.
+	 * @throws HmsSystemException   Generic System Exception.
+	 * @throws HmsBusinessException Generic Client Exception.
+	 */
 	@GET
 	@Path("/getPatients")
 	@Produces(MediaType.APPLICATION_JSON)
 	public ResponseBody patientsForDoctors() throws HmsSystemException, HmsBusinessException {
+		LOGGER.trace("Enter the patientsForDoctors method.");
 		Map<Integer, List<Patient>> map = doctorDelegate.patientsForDoctors();
 		ResponseBody response = new ResponseBody();
 		response.setStatus(ResponseConstants.SUCCESS);
 		response.setData(map);
+		LOGGER.trace("Exit the patientsForDoctors method.");
 		return response;
 	}
 }
