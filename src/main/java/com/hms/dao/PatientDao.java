@@ -93,7 +93,7 @@ public class PatientDao {
 				throw new UsernameAlreadyExistsException("User with username already existd");
 			}
 		} catch (SQLException e) {
-			LOGGER.info("Exited the createPatient DAO method");
+			LOGGER.error(MESSAGE_BUNDLE.getString("HMS4001E"), e.getMessage());
 			throw new UsernameAlreadyExistsException("User with username already existd");
 		} finally {
 			LOGGER.traceExit();
@@ -152,7 +152,7 @@ public class PatientDao {
 			LOGGER.traceExit(patients.toString());
 			return patients;
 		} catch (SQLException e) {
-
+			LOGGER.error(MESSAGE_BUNDLE.getString("HMS4001E"), e.getMessage());
 		} finally {
 			LOGGER.traceExit();
 			if (connection != null) {
@@ -207,7 +207,7 @@ public class PatientDao {
 			LOGGER.traceExit(patient.toString());
 			return patient;
 		} catch (SQLException e) {
-
+			LOGGER.error(MESSAGE_BUNDLE.getString("HMS4001E"), e.getMessage());
 		} finally {
 			LOGGER.traceExit();
 			if (connection != null) {
@@ -260,6 +260,7 @@ public class PatientDao {
 				connection.rollback();
 			}
 		} catch (SQLException e) {
+			LOGGER.error(MESSAGE_BUNDLE.getString("HMS4001E"), e.getMessage());
 			return false;
 		} finally {
 			LOGGER.traceExit();
@@ -311,7 +312,7 @@ public class PatientDao {
 			}
 
 		} catch (SQLException e) {
-
+			LOGGER.error(MESSAGE_BUNDLE.getString("HMS4001E"), e.getMessage());
 		} finally {
 			LOGGER.traceExit();
 			if (connection != null) {

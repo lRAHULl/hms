@@ -10,11 +10,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.hms.config.DbConfig;
+import com.hms.constants.LoggerConstants;
 import com.hms.constants.NumberConstants;
 import com.hms.constants.QueryConstants;
 import com.hms.exception.UserNotFoundException;
@@ -31,6 +33,7 @@ import com.hms.model.Patient;
  */
 public class DoctorDao {
 	private static final Logger LOGGER = LogManager.getLogger(DoctorDao.class);
+	private static final ResourceBundle MESSAGE_BUNDLE = ResourceBundle.getBundle(LoggerConstants.LOGGER_MESSAGES);
 
 	/**
 	 *
@@ -90,11 +93,13 @@ public class DoctorDao {
 				connection.rollback();
 			}
 		} catch (SQLIntegrityConstraintViolationException e) {
+			LOGGER.error(MESSAGE_BUNDLE.getString("HMS4001E"), e.getMessage());
 			throw new UsernameAlreadyExistsException("User with username already existd");
 		} catch (SQLException e) {
-			LOGGER.trace("Exited the createPatient DAO method" + e.getMessage());
+			LOGGER.error(MESSAGE_BUNDLE.getString("HMS4001E"), e.getMessage());
 			throw new SQLException("SQL server error");
 		} catch (Exception e) {
+			LOGGER.error(MESSAGE_BUNDLE.getString("HMS4001E"), e.getMessage());
 			throw new SQLException("SQL server error" + e.getMessage());
 		} finally {
 			LOGGER.traceExit();
@@ -151,8 +156,10 @@ public class DoctorDao {
 			LOGGER.traceExit(doctors.toString());
 			return doctors;
 		} catch (SQLException e) {
+			LOGGER.error(MESSAGE_BUNDLE.getString("HMS4001E"), e.getMessage());
 			throw new SQLException("SQL Error: " + e.getMessage());
 		} catch (Exception e) {
+			LOGGER.error(MESSAGE_BUNDLE.getString("HMS4001E"), e.getMessage());
 			throw new SQLException("System Error: " + e.getMessage());
 		} finally {
 			LOGGER.traceExit();
@@ -206,8 +213,10 @@ public class DoctorDao {
 			LOGGER.traceExit(doctor.toString());
 			return doctor;
 		} catch (SQLException e) {
+			LOGGER.error(MESSAGE_BUNDLE.getString("HMS4001E"), e.getMessage());
 			throw new SQLException("SQL Error " + e.getMessage());
 		} catch (Exception e) {
+			LOGGER.error(MESSAGE_BUNDLE.getString("HMS4001E"), e.getMessage());
 			throw new SQLException("System Error " + e.getMessage());
 		} finally {
 			LOGGER.traceExit();
@@ -320,8 +329,10 @@ public class DoctorDao {
 			LOGGER.traceExit(patientsForDoctor.toString());
 			return patientsForDoctor;
 		} catch (SQLException e) {
+			LOGGER.error(MESSAGE_BUNDLE.getString("HMS4001E"), e.getMessage());
 			throw new SQLException("SQL Error: " + e.getMessage());
 		} catch (Exception e) {
+			LOGGER.error(MESSAGE_BUNDLE.getString("HMS4001E"), e.getMessage());
 			throw new SQLException("SQL Error: " + e.getMessage());
 		} finally {
 			LOGGER.traceExit();
@@ -384,8 +395,10 @@ public class DoctorDao {
 			LOGGER.traceExit(doctorPatientsMap.toString());
 			return doctorPatientsMap;
 		} catch (SQLException e) {
+			LOGGER.error(MESSAGE_BUNDLE.getString("HMS4001E"), e.getMessage());
 			throw new SQLException("SQL Error: " + e.getMessage());
 		} catch (Exception e) {
+			LOGGER.error(MESSAGE_BUNDLE.getString("HMS4001E"), e.getMessage());
 			throw new SQLException("SQL Error: " + e.getMessage());
 		} finally {
 			LOGGER.traceExit();
