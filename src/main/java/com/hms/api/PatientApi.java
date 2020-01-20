@@ -48,13 +48,12 @@ public class PatientApi {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public ResponseBody createPatient(Patient patient) throws UsernameAlreadyExistsException {
-		// FIX: USE LOG4J TRACE ENTRY AND EXIT LOGS
-		LOGGER.info("Entered the createPatient Service with patient object of username: " + patient.getUsername());
+		LOGGER.traceEntry(patient.toString());
 		Patient createdPatient = patientDelegate.createPatient(patient);
 		ResponseBody response = new ResponseBody();
 		response.setStatus(ResponseConstants.SUCCESS);
 		response.setData(createdPatient);
-		LOGGER.info("Entered the createPatient Service with response status: " + response.getStatus());
+		LOGGER.traceExit(response.toString());
 		return response;
 	}
 
@@ -67,12 +66,12 @@ public class PatientApi {
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON)
 	public ResponseBody readPatients() {
-		LOGGER.info("Enter the readPatients Service method");
+		LOGGER.traceEntry();
 		List<Patient> patients = patientDelegate.readPatients();
 		ResponseBody response = new ResponseBody();
 		response.setStatus(ResponseConstants.SUCCESS);
 		response.setData(patients);
-		LOGGER.info("Exit the readPatients Service method");
+		LOGGER.traceExit(patients.toString());
 		return response;
 	}
 
@@ -86,12 +85,12 @@ public class PatientApi {
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public ResponseBody readPatient(@PathParam("id") int id) {
-		LOGGER.info("Enter the readPatient Service method with id: " + id);
+		LOGGER.traceEntry(Integer.toString(id));
 		Patient patient = patientDelegate.readPatient(id);
 		ResponseBody response = new ResponseBody();
 		response.setStatus(ResponseConstants.SUCCESS);
 		response.setData(patient);
-		LOGGER.info("Exit the readPatient Service method");
+		LOGGER.traceExit(response.toString());
 		return response;
 
 	}
@@ -107,12 +106,12 @@ public class PatientApi {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public ResponseBody updatePatient(Patient patient) {
-		LOGGER.info("Enter the updatePatient Service method with id: " + patient.getUserId());
+		LOGGER.traceEntry(patient.toString());
 		boolean status = patientDelegate.updatePatient(patient);
 		ResponseBody response = new ResponseBody();
 		response.setStatus(ResponseConstants.SUCCESS);
 		response.setData(status);
-		LOGGER.info("Exit the updatePatient Service method");
+		LOGGER.traceExit(response.toString());
 		return response;
 
 	}
@@ -128,9 +127,9 @@ public class PatientApi {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response deletePatient(Patient patient) {
-		LOGGER.info("Enter the deletePatient Service method with id: " + patient.getUserId());
+		LOGGER.traceEntry(patient.toString());
 		boolean status = patientDelegate.deletePatient(patient);
-		LOGGER.info("Exit the deletePatient Service method");
+		LOGGER.traceExit(status);
 		return Response.status(ResponseConstants.SUCCESS_WITHOUT_RESPONSE).entity(status).build();
 	}
 }

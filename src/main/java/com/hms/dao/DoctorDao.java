@@ -42,7 +42,7 @@ public class DoctorDao {
 	 * @throws SQLException                   system generated SQL exception.
 	 */
 	public static Doctor createDoctor(Doctor doctor) throws UsernameAlreadyExistsException, SQLException {
-		LOGGER.trace("Enter the createDoctor with id: " + doctor.getUserId());
+		LOGGER.traceEntry(doctor.toString());
 		PreparedStatement userInsertStatement, doctorInsertStatement;
 		DbConfig dbConfig = null;
 		Connection connection = null;
@@ -81,6 +81,7 @@ public class DoctorDao {
 					if (connection != null) {
 						dbConfig.closeConnection();
 					}
+					LOGGER.traceExit(doctor.toString());
 					return doctor;
 				} else {
 					connection.rollback();
@@ -96,6 +97,7 @@ public class DoctorDao {
 		} catch (Exception e) {
 			throw new SQLException("SQL server error" + e.getMessage());
 		} finally {
+			LOGGER.traceExit();
 			if (connection != null) {
 				dbConfig.closeConnection();
 			}
@@ -111,7 +113,7 @@ public class DoctorDao {
 	 * @throws SQLException          SQL server error.
 	 */
 	public static List<Doctor> readDoctors() throws SQLException {
-		LOGGER.trace("Inside the readDoctors DAO method");
+		LOGGER.traceEntry();
 		DbConfig dbConfig = null;
 		Connection connection = null;
 		ResultSet resultSet;
@@ -146,14 +148,14 @@ public class DoctorDao {
 			if (connection != null) {
 				dbConfig.closeConnection();
 			}
-			LOGGER.trace("Exited the readDoctors DAO method");
+			LOGGER.traceExit(doctors.toString());
 			return doctors;
 		} catch (SQLException e) {
 			throw new SQLException("SQL Error: " + e.getMessage());
 		} catch (Exception e) {
 			throw new SQLException("System Error: " + e.getMessage());
 		} finally {
-			LOGGER.trace("Inside Finally block");
+			LOGGER.traceExit();
 			if (connection != null) {
 				dbConfig.closeConnection();
 			}
@@ -169,7 +171,7 @@ public class DoctorDao {
 	 * @throws SQLException          Exception thrown by SQL.
 	 */
 	public static Doctor readDoctor(int id) throws UserNotFoundException, SQLException {
-		LOGGER.trace("Inside the readDoctor DAO method");
+		LOGGER.traceEntry(Integer.toString(id));
 		DbConfig dbConfig = null;
 		Connection connection = null;
 		ResultSet resultSet;
@@ -201,14 +203,14 @@ public class DoctorDao {
 			if (connection != null) {
 				dbConfig.closeConnection();
 			}
-			LOGGER.trace("Exited the readDoctor DAO method");
+			LOGGER.traceExit(doctor.toString());
 			return doctor;
 		} catch (SQLException e) {
 			throw new SQLException("SQL Error " + e.getMessage());
 		} catch (Exception e) {
 			throw new SQLException("System Error " + e.getMessage());
 		} finally {
-			LOGGER.trace("Inside Finally block");
+			LOGGER.traceExit();
 			if (connection != null) {
 				dbConfig.closeConnection();
 			}
@@ -223,7 +225,7 @@ public class DoctorDao {
 	 * @throws SQLException system generated SQL exception.
 	 */
 	public static boolean deleteDoctor(int id) throws SQLException {
-		LOGGER.trace("Inside the deleteDoctor DAO method for patient with id: " + id);
+		LOGGER.traceEntry(Integer.toString(id));
 		DbConfig dbConfig = null;
 		Connection connection = null;
 		PreparedStatement userDeleteStatement, doctorDeleteStatement;
@@ -245,7 +247,7 @@ public class DoctorDao {
 					if (connection != null) {
 						dbConfig.closeConnection();
 					}
-					LOGGER.trace("Exited the deleteDoctor DAO method");
+					LOGGER.traceExit(true);
 					return true;
 				} else {
 					connection.rollback();
@@ -260,11 +262,11 @@ public class DoctorDao {
 		} catch (Exception e) {
 			throw new SQLException("SQL Error: " + e.getMessage());
 		} finally {
+			LOGGER.traceExit();
 			if (connection != null) {
 				dbConfig.closeConnection();
 			}
 		}
-		LOGGER.trace("Exited the deleteDoctor DAO method");
 		return false;
 	}
 
@@ -274,8 +276,8 @@ public class DoctorDao {
 	 * @return List of patients for that doctor.
 	 * @throws SQLException SQL server error.
 	 */
-	public static List<Patient> patientsForDoctor(int id) throws SQLException {
-		LOGGER.trace("Inside patientsForDoctor DAO method");
+	public static List<Patient> getPatientsForDoctor(int id) throws SQLException {
+		LOGGER.traceEntry(Integer.toString(id));
 		DbConfig dbConfig = null;
 		Connection connection = null;
 		ResultSet resultSet;
@@ -315,12 +317,14 @@ public class DoctorDao {
 			if (connection != null) {
 				dbConfig.closeConnection();
 			}
+			LOGGER.traceExit(patientsForDoctor.toString());
 			return patientsForDoctor;
 		} catch (SQLException e) {
 			throw new SQLException("SQL Error: " + e.getMessage());
 		} catch (Exception e) {
 			throw new SQLException("SQL Error: " + e.getMessage());
 		} finally {
+			LOGGER.traceExit();
 			if (connection != null) {
 				dbConfig.closeConnection();
 			}
@@ -332,8 +336,8 @@ public class DoctorDao {
 	 * @return Map of patients to doctors.
 	 * @throws SQLException System exception.
 	 */
-	public static Map<Integer, List<Patient>> patientsForDoctors() throws SQLException {
-		LOGGER.trace("Inside patientsForDoctors DAO method");
+	public static Map<Integer, List<Patient>> getPatientsForAllDoctors() throws SQLException {
+		LOGGER.traceEntry();
 		DbConfig dbConfig = null;
 		Connection connection = null;
 		ResultSet resultSet;
@@ -377,12 +381,14 @@ public class DoctorDao {
 			if (connection != null) {
 				dbConfig.closeConnection();
 			}
+			LOGGER.traceExit(doctorPatientsMap.toString());
 			return doctorPatientsMap;
 		} catch (SQLException e) {
 			throw new SQLException("SQL Error: " + e.getMessage());
 		} catch (Exception e) {
 			throw new SQLException("SQL Error: " + e.getMessage());
 		} finally {
+			LOGGER.traceExit();
 			if (connection != null) {
 				dbConfig.closeConnection();
 			}

@@ -33,10 +33,9 @@ public class PatientHelper {
 	 * @throws UsernameAlreadyExistsException custom exception.
 	 */
 	public Patient createPatient(Patient patient) throws UsernameAlreadyExistsException {
-		LOGGER.info(
-				"Entered the createPatient Helper method with patient object with username: " + patient.getUsername());
+		LOGGER.traceEntry(patient.toString());
 		Patient createdPatient = patientDao.createPatient(patient);
-		LOGGER.info("exited the createPatient Helper with patient object with id: " + createdPatient.getUserId());
+		LOGGER.traceExit(createdPatient.toString());
 		return createdPatient;
 	}
 
@@ -46,9 +45,9 @@ public class PatientHelper {
 	 * @return list of patients to the delegate layer.
 	 */
 	public List<Patient> readPatients() {
-		LOGGER.info("Entered the readPatients Helper method");
+		LOGGER.traceEntry();
 		List<Patient> patients = patientDao.readPatients();
-		LOGGER.info("Exited the readPatients Helper method");
+		LOGGER.traceExit(patients.toString());
 		return patients;
 	}
 
@@ -59,9 +58,9 @@ public class PatientHelper {
 	 * @return Patient with id from the PatientDAO.
 	 */
 	public Patient readPatient(int id) {
-		LOGGER.info("Entered the readPatient Helper method with id: " + id);
+		LOGGER.traceEntry(Integer.toString(id));
 		Patient patient = patientDao.readPatient(id);
-		LOGGER.info("Exited the readPatient Helper method");
+		LOGGER.traceExit(patient.toString());
 		return patient;
 	}
 
@@ -72,9 +71,9 @@ public class PatientHelper {
 	 * @return true if patient updated else false.
 	 */
 	public boolean updatePatient(Patient patient) {
-		LOGGER.info("Entered the updatePatient Helper method with id: " + patient.getUserId());
+		LOGGER.traceEntry(patient.toString());
 		boolean status = patientDao.updatePatient(patient);
-		LOGGER.info("Exited the updatePatient Helper method");
+		LOGGER.traceExit(status);
 		return status;
 	}
 
@@ -85,9 +84,9 @@ public class PatientHelper {
 	 * @return true if patient deleted else false.
 	 */
 	public boolean deletePatient(Patient patient) {
-		LOGGER.info("Entered the deletePatient Helper method with id: " + patient.getUserId());
+		LOGGER.traceEntry(patient.toString());
 		boolean status = patientDao.deletePatient(patient.getUserId());
-		LOGGER.info("Exited the deletePatient Helper method");
+		LOGGER.traceExit(status);
 		return status;
 	}
 

@@ -4,6 +4,9 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.hms.constants.ResponseConstants;
 
 /**
@@ -22,6 +25,8 @@ public class HmsSystemException extends Exception implements ExceptionMapper<Hms
 	public HmsSystemException() {
 		super();
 	}
+
+	private static final Logger LOGGER = LogManager.getLogger(HmsSystemException.class);
 
 	/**
 	 *
@@ -69,6 +74,7 @@ public class HmsSystemException extends Exception implements ExceptionMapper<Hms
 	 */
 	@Override
 	public Response toResponse(HmsSystemException exception) {
+		LOGGER.error(exception.getLocalizedMessage());
 		return Response.status(ResponseConstants.SERVER_ERROR).entity("Something went wrong").type("text/plain")
 				.build();
 

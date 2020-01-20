@@ -7,11 +7,13 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ResourceBundle;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.hms.config.DbConfig;
+import com.hms.constants.LoggerConstants;
 import com.hms.constants.NumberConstants;
 import com.hms.constants.QueryConstants;
 import com.hms.exception.UsernameAlreadyExistsException;
@@ -27,6 +29,7 @@ import com.hms.model.Patient;
 public class PatientDao {
 
 	private static final Logger LOGGER = LogManager.getLogger(PatientDao.class);
+	private static final ResourceBundle MESSAGE_BUNDLE = ResourceBundle.getBundle(LoggerConstants.LOGGER_MESSAGES);
 
 	/**
 	 * This method creates a patient in the database.
@@ -37,7 +40,7 @@ public class PatientDao {
 	 * @throws SQLException
 	 */
 	public Patient createPatient(Patient patient) throws UsernameAlreadyExistsException {
-		LOGGER.info("Entered the createPatient DAO method");
+		LOGGER.traceEntry(patient.toString());
 		PreparedStatement userStatement, patientStatement;
 		DbConfig dbConfig = null;
 		Connection connection = null;
@@ -79,6 +82,7 @@ public class PatientDao {
 					if (connection != null) {
 						dbConfig.closeConnection();
 					}
+					LOGGER.traceExit(patient.toString());
 					return patient;
 				} else {
 					connection.rollback();
@@ -92,6 +96,7 @@ public class PatientDao {
 			LOGGER.info("Exited the createPatient DAO method");
 			throw new UsernameAlreadyExistsException("User with username already existd");
 		} finally {
+			LOGGER.traceExit();
 			if (connection != null) {
 				dbConfig.closeConnection();
 			}
@@ -105,7 +110,7 @@ public class PatientDao {
 	 * @return list of Patients from the database.
 	 */
 	public List<Patient> readPatients() {
-		LOGGER.info("Inside the readPatients DAO method");
+		LOGGER.traceEntry();
 		DbConfig dbConfig = null;
 		Connection connection = null;
 		ResultSet resultSet;
@@ -144,12 +149,12 @@ public class PatientDao {
 			if (connection != null) {
 				dbConfig.closeConnection();
 			}
-			LOGGER.info("Exited the readPatients DAO method");
+			LOGGER.traceExit(patients.toString());
 			return patients;
 		} catch (SQLException e) {
 
 		} finally {
-			LOGGER.info("Inside Finally block");
+			LOGGER.traceExit();
 			if (connection != null) {
 				dbConfig.closeConnection();
 			}
@@ -164,7 +169,7 @@ public class PatientDao {
 	 * @return Patient with id from the database.
 	 */
 	public Patient readPatient(int id) {
-		LOGGER.info("Inside the readPatient DAO method with id: " + id);
+		LOGGER.traceExit(Integer.toString(id));
 		DbConfig dbConfig = null;
 		Connection connection = null;
 		ResultSet resultSet;
@@ -199,12 +204,12 @@ public class PatientDao {
 			if (connection != null) {
 				dbConfig.closeConnection();
 			}
-			LOGGER.info("Exited the readPatient DAO method");
+			LOGGER.traceExit(patient.toString());
 			return patient;
 		} catch (SQLException e) {
 
 		} finally {
-			LOGGER.info("Inside Finally block");
+			LOGGER.traceExit();
 			if (connection != null) {
 				dbConfig.closeConnection();
 			}
@@ -219,7 +224,7 @@ public class PatientDao {
 	 * @return true if patient updated else false.
 	 */
 	public boolean updatePatient(Patient patient) {
-		LOGGER.info("Inside the updatePatient DAO method for patient with id: " + patient.getUserId());
+		LOGGER.traceEntry(patient.toString());
 		DbConfig dbConfig = null;
 		Connection connection = null;
 		PreparedStatement userUpdateStatement, patientUpdateStatement;
@@ -246,7 +251,7 @@ public class PatientDao {
 					if (connection != null) {
 						dbConfig.closeConnection();
 					}
-					LOGGER.info("Exited the updatePatient DAO method");
+					LOGGER.traceExit(true);
 					return true;
 				} else {
 					connection.rollback();
@@ -257,9 +262,9 @@ public class PatientDao {
 		} catch (SQLException e) {
 			return false;
 		} finally {
+			LOGGER.traceExit();
 			if (connection != null) {
 				dbConfig.closeConnection();
-				LOGGER.info("Exited the updatePatient DAO method");
 			}
 		}
 
@@ -273,7 +278,7 @@ public class PatientDao {
 	 * @return true if patient deleted else false.
 	 */
 	public boolean deletePatient(int id) {
-		LOGGER.info("Inside the deletePatient DAO method for patient with id: " + id);
+		LOGGER.traceEntry(Integer.toString(id));
 		DbConfig dbConfig = null;
 		Connection connection = null;
 		PreparedStatement userDeleteStatement, patientDeleteStatement;
@@ -295,7 +300,7 @@ public class PatientDao {
 					if (connection != null) {
 						dbConfig.closeConnection();
 					}
-					LOGGER.info("Exited the deletePatient DAO method");
+					LOGGER.traceExit(true);
 					return true;
 				} else {
 					connection.rollback();
@@ -308,11 +313,11 @@ public class PatientDao {
 		} catch (SQLException e) {
 
 		} finally {
+			LOGGER.traceExit();
 			if (connection != null) {
 				dbConfig.closeConnection();
 			}
 		}
-		LOGGER.info("Exited the deletePatient DAO method");
 		return false;
 
 	}

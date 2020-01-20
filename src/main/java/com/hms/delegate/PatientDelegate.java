@@ -30,14 +30,12 @@ public class PatientDelegate {
 	 * @throws UsernameAlreadyExistsException from createPatient DAO method.
 	 */
 	public Patient createPatient(Patient patient) throws UsernameAlreadyExistsException {
-		LOGGER.info(
-				"Enter the createPatient Delegate method with patient object with username: " + patient.getUsername());
+		LOGGER.traceEntry(patient.toString());
 		Patient createdPatient;
 		try {
 			createdPatient = patientHelper.createPatient(patient);
 			createdPatient.setPassword(null);
-			LOGGER.info("Enter the createPatient Delegate method with patient object with userid: "
-					+ createdPatient.getUserId());
+			LOGGER.traceExit(createdPatient.toString());
 			return createdPatient;
 		} catch (UsernameAlreadyExistsException e) {
 			throw new UsernameAlreadyExistsException("Username already exists", e);
@@ -51,12 +49,12 @@ public class PatientDelegate {
 	 * @return list of patients.
 	 */
 	public List<Patient> readPatients() {
-		LOGGER.info("Enter the readPatients Delegate method");
+		LOGGER.traceEntry();
 		List<Patient> patients = patientHelper.readPatients();
 		for (Patient patient : patients) {
 			patient.setPassword(null);
 		}
-		LOGGER.info("Exit the readPatients Delegate method");
+		LOGGER.traceExit(patients.toString());
 		return patients;
 	}
 
@@ -67,10 +65,10 @@ public class PatientDelegate {
 	 * @return patients with userId = id.
 	 */
 	public Patient readPatient(int id) {
-		LOGGER.info("Enter the readPatient Delegate method with id: " + id);
+		LOGGER.traceEntry(Integer.toString(id));
 		Patient patient = patientHelper.readPatient(id);
 		patient.setPassword(null);
-		LOGGER.info("Exit the readPatient Delegate method");
+		LOGGER.traceExit(patient.toString());
 		return patient;
 	}
 
@@ -81,10 +79,10 @@ public class PatientDelegate {
 	 * @return true if patient updated else throw an exception.
 	 */
 	public boolean updatePatient(Patient patient) {
-		LOGGER.info("Entered the updatePatient Helper method with id: " + patient.getUserId());
+		LOGGER.traceEntry(patient.toString());
 		boolean status = patientHelper.updatePatient(patient);
 		if (status) {
-			LOGGER.info("Exited the updatePatient Helper method");
+			LOGGER.traceExit(status);
 			return status;
 		} else {
 //			Exception should be thrown.
@@ -99,10 +97,10 @@ public class PatientDelegate {
 	 * @return true if patient deleted else throw an exception.
 	 */
 	public boolean deletePatient(Patient patient) {
-		LOGGER.info("Entered the deletePatient Helper method with id: " + patient.getUserId());
+		LOGGER.traceEntry(patient.toString());
 		boolean status = patientHelper.deletePatient(patient);
 		if (status) {
-			LOGGER.info("Exited the deletePatient Helper method");
+			LOGGER.traceExit(status);
 			return status;
 		} else {
 //			Exception should be thrown.

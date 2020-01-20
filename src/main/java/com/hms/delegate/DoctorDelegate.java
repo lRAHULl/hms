@@ -33,11 +33,9 @@ public class DoctorDelegate {
 	 * @throws HmsBusinessException generic client exception.
 	 */
 	public static Doctor createDoctor(Doctor doctor) throws HmsSystemException, HmsBusinessException {
-		LOGGER.trace(
-				"Enter the createDoctor Delegate method with doctor object with username: " + doctor.getUsername());
+		LOGGER.traceEntry(doctor.toString());
 		Doctor createdDoctor = DoctorHelper.createDoctor(doctor);
-		LOGGER.trace(
-				"Enter the createPatient Delegate method with doctor object with userid: " + createdDoctor.getUserId());
+		LOGGER.traceExit(createdDoctor.toString());
 		return createdDoctor;
 
 	}
@@ -50,10 +48,9 @@ public class DoctorDelegate {
 	 * @throws HmsSystemException   Generic System Exception.
 	 */
 	public static List<Doctor> readDoctors() throws HmsBusinessException, HmsSystemException {
-		LOGGER.trace("Enter the readDoctors Delegate method");
+		LOGGER.traceEntry();
 		List<Doctor> doctors = DoctorHelper.readDoctors();
-
-		LOGGER.trace("Exit the readDoctors Delegate method");
+		LOGGER.traceExit(doctors.toString());
 		return doctors;
 	}
 
@@ -66,10 +63,10 @@ public class DoctorDelegate {
 	 * @throws HmsSystemException   generic system exception.
 	 */
 	public static Doctor readDoctor(int id) throws HmsBusinessException, HmsSystemException {
-		LOGGER.trace("Enter the readDoctor Delegate method with id: " + id);
+		LOGGER.traceEntry(Integer.toString(id));
 		Doctor doctor = null;
 		doctor = DoctorHelper.readDoctor(id);
-		LOGGER.trace("Exit the readDoctor Delegate method");
+		LOGGER.traceExit(doctor.toString());
 		return doctor;
 	}
 
@@ -82,9 +79,9 @@ public class DoctorDelegate {
 	 * @throws HmsSystemException   generic system exception.
 	 */
 	public static boolean deleteDoctor(Doctor doctor) throws HmsBusinessException, HmsSystemException {
-		LOGGER.trace("Entered the deleteDoctor Helper method with id: " + doctor.getUserId());
+		LOGGER.traceEntry(doctor.toString());
 		boolean status = DoctorHelper.deleteDoctor(doctor);
-		LOGGER.trace("Exit the deleteDoctor method.");
+		LOGGER.traceExit(status);
 		return status;
 	}
 
@@ -96,9 +93,9 @@ public class DoctorDelegate {
 	 * @throws HmsSystemException   Generic System Exception.
 	 */
 	public static List<Patient> patientsForDoctor(int id) throws HmsBusinessException, HmsSystemException {
-		LOGGER.trace("Enter the patientsForDoctor method with id: " + id);
-		List<Patient> patients = DoctorHelper.patientsForDoctor(id);
-		LOGGER.trace("Exit the patientsForDoctor method");
+		LOGGER.traceEntry(Integer.toString(id));
+		List<Patient> patients = DoctorHelper.getPatientsForDoctor(id);
+		LOGGER.traceExit(patients.toString());
 		return patients;
 	}
 
@@ -109,9 +106,9 @@ public class DoctorDelegate {
 	 * @throws HmsBusinessException Generic Client Exception.
 	 */
 	public static Map<Integer, List<Patient>> patientsForDoctors() throws HmsSystemException, HmsBusinessException {
-		LOGGER.trace("Enter the patientsForDoctors method.");
-		Map<Integer, List<Patient>> map = DoctorHelper.patientsForDoctors();
-		LOGGER.trace("Exit the patientsForDoctor method.");
+		LOGGER.traceEntry();
+		Map<Integer, List<Patient>> map = DoctorHelper.getPatientsForAllDoctors();
+		LOGGER.traceExit(map.toString());
 		return map;
 	}
 }

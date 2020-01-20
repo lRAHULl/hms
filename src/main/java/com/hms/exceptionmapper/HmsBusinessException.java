@@ -4,6 +4,9 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.hms.constants.ResponseConstants;
 
 /**
@@ -20,6 +23,8 @@ public class HmsBusinessException extends Exception implements ExceptionMapper<H
 	 * Serialization id.
 	 */
 	private static final long serialVersionUID = 1L;
+
+	private static final Logger LOGGER = LogManager.getLogger(HmsBusinessException.class);
 
 	/**
 	 * Empty constructor.
@@ -70,6 +75,7 @@ public class HmsBusinessException extends Exception implements ExceptionMapper<H
 	 */
 	@Override
 	public Response toResponse(HmsBusinessException exception) {
+		LOGGER.error(exception.getLocalizedMessage());
 		return Response.status(ResponseConstants.CLIENT_ERROR).entity(exception.getMessage()).type("text/plain")
 				.build();
 	}
